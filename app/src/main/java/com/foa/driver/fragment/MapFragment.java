@@ -44,7 +44,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
         }else{
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+            locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, LOCATION_REFRESH_TIME,
                     LOCATION_REFRESH_DISTANCE, mLocationListener);
         }
 
@@ -54,7 +54,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            //Toast.makeText(getActivity(),""+ location.getLatitude()+";"+location.getLongitude(), Toast.LENGTH_SHORT).show();
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15.0f));
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+
         }
     };
 
@@ -67,10 +78,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }else {
             mMap.setMyLocationEnabled(true);
         }
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //Zoom to HCMC
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(10.762622,106.660172),8f));
     }
 
 }

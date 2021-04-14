@@ -1,15 +1,24 @@
 package com.foa.driver;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.widget.Button;
 
+import com.foa.driver.service.NotificationService;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -18,6 +27,8 @@ import androidx.navigation.ui.NavigationUI;
 public class MainActivity extends AppCompatActivity  {
 
     private final int LOCATION_REQUEST_CODE = 1999;
+    private final String CHANNEL_ID = "123";
+    private final int notificationId = 93;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +55,50 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentTitle("Noti name")
+                .setContentText("Content")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .addAction(R.drawable.ic_dashboard_black_24dp, "Chấp nhận",
+                        pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("Much longer text that cannot fit one line..."));
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(notificationId, mBuilder.build());
+
+        //services
+
+        Intent backgroundServiceIntent=new Intent(this, NotificationService.class);
+        Button btn_startService=findViewById(R.id.btn_startService);
+        Button btn_stopBoundService=findViewById(R.id.btn_stopService);
+
+        btn_startService.setOnClickListener(v->{
+
+            startService(backgroundServiceIntent);
+            btn_startService.setEnabled(false);
+            btn_stopBoundService.setEnabled(true);
+
+        });
+
+
+
+        btn_stopBoundService.setOnClickListener(v->{
+            stopService(backgroundServiceIntent);
+            btn_startService.setEnabled(true);
+            btn_stopBoundService.setEnabled(false);
+        });
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_REQUEST_CODE) {
@@ -53,6 +108,22 @@ public class MainActivity extends AppCompatActivity  {
             else {
                 finish();
             }
+        }
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Notification Channel";
+            String description = "This is description";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }
