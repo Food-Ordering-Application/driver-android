@@ -128,7 +128,7 @@
             android:layout_above="@id/title_requests_count"
             android:layout_alignLeft="@id/title_requests_count"
             android:layout_alignStart="@id/title_requests_count"
-            android:text="@string/requests_count_badge" />
+            android:text="Khoảng cách" />
 
         <TextView
             android:id="@+id/title_weight"
@@ -138,33 +138,17 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="@string/weight_mock" />
+            android:text="100.000đ" />
 
         <TextView
             style="@style/TitleBadgeTitle"
             android:layout_width="wrap_content"
+            android:gravity="end"
             android:layout_height="wrap_content"
             android:layout_above="@id/title_weight"
-            android:layout_alignLeft="@id/title_weight"
+            android:layout_alignParentEnd="true"
             android:layout_alignStart="@id/title_weight"
-            android:text="@string/weight_badge" />
-
-        <TextView
-            android:id="@+id/title_pledge"
-            style="@style/TitleBadgeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            style="@style/TitleBadgeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/title_pledge"
-            android:layout_alignLeft="@id/title_pledge"
-            android:layout_alignStart="@id/title_pledge"
-            android:text="@string/pledge_badge" />
+            android:text="Giá" />
 
     </RelativeLayout>
 </LinearLayout>
