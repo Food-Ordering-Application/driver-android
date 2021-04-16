@@ -35,6 +35,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private LocationManager locationManager;
     private final int LOCATION_REFRESH_TIME = 5000;
+    private final int LOCATION_REFRESH_TIME_SHORT = 3000;
     private final int LOCATION_REFRESH_DISTANCE = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -49,14 +50,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             buildAlertMessageNoGps();
         }
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                        LOCATION_REFRESH_DISTANCE, mLocationListener);
+            }else{
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME_SHORT,
+                        LOCATION_REFRESH_DISTANCE, mLocationListener);
+            }
 
-        }else{
-
-
-
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME,
-                    LOCATION_REFRESH_DISTANCE, mLocationListener);
         }
 
         return root;
@@ -82,7 +84,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Bật GPS để sử dụng Ứng dụng")
+        builder.setMessage("Bật GPS để định vị chính xác hơn !!!")
                 .setCancelable(false)
                 .setPositiveButton("Yes", (dialog, id) -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
                 .setNegativeButton("No", (dialog, id) -> dialog.cancel());

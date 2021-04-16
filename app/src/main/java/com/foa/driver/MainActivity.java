@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.foa.driver.service.NotificationService;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity  {
         menu.clear();
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.app_bar_menu, menu);
+
         return true;
     }
 
