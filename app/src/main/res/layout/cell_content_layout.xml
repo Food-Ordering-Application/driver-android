@@ -51,76 +51,9 @@
         <ImageView
             android:id="@+id/head_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/head_image" />
-
-        <TextView
-            android:id="@+id/head_image_left_text"
-            style="@style/ContentImageBadgeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/head_image"
-            android:layout_alignLeft="@id/head_image"
-            android:layout_alignStart="@id/head_image"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp"
-            android:text="@string/requests_count_mock" />
-
-        <TextView
-            style="@style/ContentImageBadgeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/head_image_left_text"
-            android:layout_alignLeft="@id/head_image_left_text"
-            android:layout_alignStart="@id/head_image_left_text"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp"
-            android:text="@string/requests_count_badge" />
-
-        <TextView
-            android:id="@+id/head_image_right_text"
-            style="@style/ContentImageBadgeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/head_image"
-            android:layout_alignEnd="@id/head_image"
-            android:layout_alignRight="@id/head_image"
-            android:paddingBottom="10dp"
-            android:paddingEnd="20dp"
-            android:paddingRight="20dp"
-            android:text="@string/weight_mock" />
-
-        <TextView
-            style="@style/ContentImageBadgeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/head_image_right_text"
-            android:layout_alignLeft="@id/head_image_right_text"
-            android:layout_alignStart="@id/head_image_right_text"
-            android:text="@string/weight_badge" />
-
-        <TextView
-            android:id="@+id/head_image_center_text"
-            style="@style/ContentImageBadgeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/head_image"
-            android:layout_centerHorizontal="true"
-            android:paddingBottom="10dp"
-            android:text="@string/pledge_mock" />
-
-        <TextView
-            style="@style/ContentImageBadgeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/head_image_center_text"
-            android:layout_alignLeft="@id/head_image_center_text"
-            android:layout_alignStart="@id/head_image_center_text"
-            android:text="@string/pledge_badge" />
-
-
+            android:src="@drawable/map_default" />
     </RelativeLayout>
 
     <!-- content body layout -->
@@ -134,82 +67,53 @@
         android:paddingRight="20dp"
         android:paddingTop="9dp">
 
-        <!-- avatar and name part -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/content_avatar_title"
                 style="@style/ContentMainBadgeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp"
-                android:text="@string/sender_badge" />
+                android:text="Món" />
 
-            <ImageView
-                android:id="@+id/content_avatar"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/content_avatar_title"
-                android:scaleType="centerCrop"
-                android:src="@drawable/avatar" />
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/content_name_view"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:text="Trà sữa trân châu"
+                    android:textColor="@color/mainTextColor"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:text="Trà sữa trân châu"
+                    android:textColor="@color/mainTextColor" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/content_name_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/content_avatar"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/content_avatar"
-                android:layout_toRightOf="@id/content_avatar"
-                android:text="@string/client_name_mock"
-                android:textColor="@color/mainTextColor"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/content_rating_stars"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/content_name_view"
-                android:layout_alignStart="@id/content_name_view"
-                android:layout_below="@id/content_name_view"
-                android:src="@drawable/stars" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/content_rating_stars"
-                android:layout_marginBottom="-2dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginStart="3dp"
-                android:layout_toEndOf="@id/content_rating_stars"
-                android:layout_toRightOf="@id/content_rating_stars"
-                android:text="@string/rating_mock"
-                android:textColor="@color/contentBadgeTitle"
-                android:textSize="12sp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/arrow" />
-
-        </RelativeLayout>
+        </LinearLayout>
 
         <!-- divider line -->
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="6dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="7dp"
             android:src="@color/contentDividerLine" />
 
         <!-- addresses part -->
@@ -295,14 +199,6 @@
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/arrow" />
-
             </RelativeLayout>
 
         </LinearLayout>
@@ -315,7 +211,7 @@
             android:layout_marginTop="7dp"
             android:src="@color/contentDividerLine" />
 
-        <!-- dates part -->
+        <!-- request button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -332,17 +228,17 @@
                     style="@style/ContentMainBadgeTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:text="@string/delivery_date_badge" />
+                    android:layout_alignParentLeft="true"
+                    android:text="Giao hàng lúc" />
 
                 <TextView
                     android:id="@+id/content_delivery_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/content_delivery_date_badge"
-                    android:layout_alignStart="@id/content_delivery_date_badge"
                     android:layout_below="@id/content_delivery_date_badge"
+                    android:layout_alignStart="@id/content_delivery_date_badge"
+                    android:layout_alignLeft="@id/content_delivery_date_badge"
                     android:text="@string/delivery_time_mock"
                     android:textColor="@color/mainTextColor"
                     android:textSize="18sp"
@@ -352,9 +248,9 @@
                     android:id="@+id/content_delivery_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/content_delivery_time"
-                    android:layout_alignStart="@id/content_delivery_time"
                     android:layout_below="@id/content_delivery_time"
+                    android:layout_alignStart="@id/content_delivery_time"
+                    android:layout_alignLeft="@id/content_delivery_time"
                     android:text="@string/delivery_date_mock"
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
@@ -371,18 +267,18 @@
                     style="@style/ContentMainBadgeTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:text="@string/deadline_badge" />
+                    android:layout_alignParentLeft="true"
+                    android:text="Tổng tiền" />
 
                 <TextView
                     android:id="@+id/content_deadline_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/content_deadline_badge"
-                    android:layout_alignStart="@id/content_deadline_badge"
                     android:layout_below="@id/content_deadline_badge"
-                    android:text="@string/deadline_time_mock"
+                    android:layout_alignStart="@id/content_deadline_badge"
+                    android:layout_alignLeft="@id/content_deadline_badge"
+                    android:text="120.000đ"
                     android:textColor="@color/mainTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -391,9 +287,9 @@
                     android:id="@+id/content_deadline_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/content_deadline_time"
-                    android:layout_alignStart="@id/content_deadline_time"
                     android:layout_below="@id/content_deadline_time"
+                    android:layout_alignStart="@id/content_deadline_time"
+                    android:layout_alignLeft="@id/content_deadline_time"
                     android:text=""
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
@@ -401,28 +297,61 @@
 
         </LinearLayout>
 
-        <!-- request button -->
-        <TextView
-            android:id="@+id/content_request_btn"
+         divider line
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="7dp"
+            android:src="@color/contentDividerLine" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/btnRequest"
-            android:padding="10dp"
-            android:text="@string/request_btn_text"
-            android:textAlignment="center"
-            android:textColor="@color/mainTextColor"
-            android:textSize="20sp" />
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thu nhập" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25.000đ"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/btn_annotation_mock"
-            android:textAlignment="center"
-            android:textColor="@color/contentBadgeTitle"
-            android:textSize="12sp" />
-
+            android:orientation="horizontal">
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/content_request_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/btnRequest"
+                android:padding="10dp"
+                android:text="CHẤP NHẬN"
+                android:textAlignment="center"
+                android:textColor="@color/mainTextColor"
+                android:textSize="20sp" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/content_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/red"
+                android:padding="10dp"
+                android:text="HUỶ"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

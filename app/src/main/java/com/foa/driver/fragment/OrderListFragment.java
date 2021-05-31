@@ -1,4 +1,4 @@
-package com.foa.driver;
+package com.foa.driver.fragment;
 
 import android.os.Bundle;
 
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.foa.driver.R;
 import com.foa.driver.adapter.FoldingCellListAdapter;
 import com.foa.driver.entity.Item;
 import com.ramotion.foldingcell.FoldingCell;

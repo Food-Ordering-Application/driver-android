@@ -4,16 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.foa.driver.OrderListFragment;
 import com.foa.driver.R;
 import com.foa.driver.adapter.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
@@ -41,9 +37,8 @@ public class OrdersFragment extends Fragment {
 
     private void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter((getActivity().getSupportFragmentManager()));
-        adapter.addFragment(new OrderListFragment(), "29/03-04/04");
-        adapter.addFragment(new OrderListFragment(), "TUẦN TRƯỚC");
-        adapter.addFragment(new OrderListFragment(), "TUẦN NÀY");
+        adapter.addFragment(new OrderListFragment(), "Đang thực hiện");
+        adapter.addFragment(new OrderListFragment(), "Đã hoàn tất");
 
         viewPager.setAdapter(adapter);
     }

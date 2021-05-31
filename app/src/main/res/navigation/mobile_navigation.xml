@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_orders" />
 
     <fragment
-        android:id="@+id/navigation_wallet"
-        android:name="com.foa.driver.fragment.StatisticFragment"
-        android:label="Bản đồ"
-        tools:layout="@layout/fragment_map" />
+        android:id="@+id/navigation_notification"
+        android:name="com.foa.driver.fragment.NotificationFragment"
+        android:label="Thông báo"
+        tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/navigation_map"
@@ -27,11 +27,11 @@
         android:id="@+id/navigation_statistic"
         android:name="com.foa.driver.fragment.StatisticFragment"
         android:label="Bản đồ"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_statistic" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.foa.driver.fragment.StatisticFragment"
+        android:name="com.foa.driver.fragment.ProfileFragment"
         android:label="Thống kê"
-        tools:layout="@layout/fragment_statistic" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>

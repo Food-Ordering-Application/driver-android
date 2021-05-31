@@ -18,17 +18,21 @@
     <string name="from_badge" translatable="false">FROM</string>
     <string name="to_badge" translatable="false">TO</string>
     <string name="delivery_date_badge" translatable="false">DELIVERY DATE</string>
-    <string name="delivery_time_mock" translatable="false">6:30 pm</string>
-    <string name="delivery_date_mock" translatable="false">May 16, 2016</string>
+    <string name="delivery_time_mock" translatable="false">6:30</string>
+    <string name="delivery_date_mock" translatable="false">15/06/2021</string>
     <string name="deadline_badge" translatable="false">REQUEST DEADLINE</string>
     <string name="deadline_time_mock" translatable="false">24 minutes</string>
     <string name="request_btn_text" translatable="false">REQUEST</string>
     <string name="btn_annotation_mock" translatable="false">5 people have sent a request</string>
-    <string name="content_from1_mock">W 90th St</string>
-    <string name="content_from2_mock">New York, NY 10025</string>
-    <string name="content_to1_mock">46th Ave</string>
-    <string name="content_to2_mock">Woodside, NY 11101</string>
+    <string name="content_from1_mock">Phường 4, Quận 5</string>
+    <string name="content_from2_mock">227 Nguyễn Văn Cừ</string>
+    <string name="content_to1_mock">Phường 2, Quận 3</string>
+    <string name="content_to2_mock">231 Lý Thái Tổ</string>
     <string name="title_activity_main2">Main2Activity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_field_empty">Không được để trống</string>
+    <string name="error_user_or_password">Tên đăng nhập hoặc mật khẩu không đúng</string>
+    <string name="login_failed">"Đăng nhập thất bại"</string>
+    <string name="login">ĐĂNG NHẬP</string>
 </resources>

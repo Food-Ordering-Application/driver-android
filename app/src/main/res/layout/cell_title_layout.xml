@@ -26,7 +26,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:textColor="@android:color/white"
-            android:textSize="26sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/title_time_label"
@@ -115,11 +115,19 @@
         <TextView
             android:id="@+id/title_requests_count"
             style="@style/TitleBadgeText"
+            android:text="0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+        <TextView
+            style="@style/TitleBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Km"
+            android:layout_toEndOf="@+id/title_requests_count"
+            android:layout_alignParentBottom="true" />
 
         <TextView
             style="@style/TitleBadgeTitle"
@@ -138,7 +146,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="100.000đ" />
+            android:text="20.000đ" />
 
         <TextView
             style="@style/TitleBadgeTitle"
@@ -148,7 +156,7 @@
             android:layout_above="@id/title_weight"
             android:layout_alignParentEnd="true"
             android:layout_alignStart="@id/title_weight"
-            android:text="Giá" />
+            android:text="Phí giao hàng" />
 
     </RelativeLayout>
 </LinearLayout>

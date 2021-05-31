@@ -10,13 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.foa.driver.service.NotificationService;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -25,12 +21,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import com.google.android.material.appbar.MaterialToolbar;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -48,7 +42,7 @@ public class MainActivity extends AppCompatActivity  {
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_orders, R.id.navigation_map, R.id.navigation_profile,R.id.navigation_wallet,
+                R.id.navigation_orders, R.id.navigation_map, R.id.navigation_profile,R.id.navigation_notification,
                 R.id.navigation_statistic)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

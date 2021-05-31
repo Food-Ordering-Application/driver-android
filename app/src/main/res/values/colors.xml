@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primaryColor">#F2994A</color>
+    <color name="primaryColorOpacity">#FDFFE6CF</color>
+    <color name="secondaryColor">#2F80ED</color>
+    <color name="teritaryColor">#BDBDBD</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -8,8 +12,22 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="colorPrimary">#594691</color>
-    <color name="colorPrimaryDark">#3e2d70</color>
+    <color name="item">#000</color>
+    <color name="putih">#fff</color>
+    <color name="putih_transparan">#99ffffff</color>
+    <color name="item_transparan">#11000000</color>
+    <color name="item_transparan2">#aa000000</color>
+
+    <color name="bg_default">#E5EBE9</color>
+    <color name="bg_dark">#33373F</color>
+    <color name="text_black">#2a2f34</color>
+    <color name="text_gray">#4D4D4D</color>
+    <color name="line_gray">#E6E6E6</color>
+    <color name="yellow">#FFE54D</color>
+    <color name="blue">#3E8FC1</color>
+    <color name="green">#7CAC42</color>
+    <color name="red">#E74825</color>
+
     <color name="bgBackSideColor">#f4f0ff</color>
     <color name="bgTitleLeft">#594691</color>
     <color name="bgTitleRight">#ffffff</color>
@@ -22,5 +40,6 @@
     <color name="mainTextColor">#343d43</color>
     <color name="btnRequest">#ffbf12</color>
 
-    <color name="black_overlay">#66000000</color>
+
+
 </resources>

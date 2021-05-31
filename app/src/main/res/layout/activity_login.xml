@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/loginWrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/textbox"
+        android:padding="20dp">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            app:endIconMode="clear_text"
+            android:labelFor="@+id/txtUserName"
+            app:helperText="Bắt buộc"
+            app:errorEnabled="true"
+            android:hint=" Tên đăng nhập"
+            android:paddingBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtUserName"
+                android:layout_height="60dp"
+                android:layout_width="300dp"
+                android:textColor="@color/text_gray"
+                android:ems="10"
+                android:singleLine="true"
+
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            app:endIconMode="password_toggle"
+            app:helperText="Bắt buộc"
+            android:labelFor="@+id/txtPassword"
+            app:errorEnabled="true"
+            android:hint="Mật khẩu"
+            android:paddingBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtPassword"
+                android:layout_height="60dp"
+                android:layout_width="300dp"
+                android:inputType="textPassword"
+                android:textColor="@color/text_gray"
+                android:ems="10"
+                android:singleLine="true"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/login"
+            android:background="@color/primaryColor"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
