@@ -6,22 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolBar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/primaryColor"/>
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/navigation_background"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         app:menu="@menu/bottom_nav_menu" />
 
     <fragment
@@ -30,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:defaultNavHost="true"
-        android:layout_below="@id/toolBar"
         app:navGraph="@navigation/mobile_navigation" />
 
     <LinearLayout

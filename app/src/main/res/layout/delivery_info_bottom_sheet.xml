@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="72dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bgContent"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
+
+        <!-- addresses part -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/content_from_badge"
+                        style="@style/ContentMainBadgeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/from_badge" />
+                    <TextView
+                        android:id="@+id/content_from_address_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bún đậu ABC"
+                        android:textColor="@color/mainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/content_from_address_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="213 Trần Hưng Đạo, P2, Quận 5"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <!-- divider line -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="7dp"
+                android:src="@color/contentDividerLine" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/content_to_badge"
+                        style="@style/ContentMainBadgeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/to_badge" />
+                    <TextView
+                        android:id="@+id/content_to_address_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chị Ngọc"
+                        android:textColor="@color/mainTextColor"
+                        android:textSize="14sp" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/content_to_address_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/content_to_badge"
+                    android:layout_alignStart="@id/content_to_badge"
+                    android:layout_below="@id/content_to_badge"
+                    android:text="227 Nguyễn Văn Cừ, P4, Quận 5"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- divider line -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="7dp"
+            android:src="@color/contentDividerLine" />
+
+        <!-- request button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/content_delivery_date_badge"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="Thời gian giao" />
+
+                <TextView
+                    android:id="@+id/content_delivery_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_delivery_date_badge"
+                    android:layout_alignStart="@id/content_delivery_date_badge"
+                    android:layout_alignLeft="@id/content_delivery_date_badge"
+                    android:text="@string/delivery_time_mock"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_delivery_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_delivery_time"
+                    android:layout_alignStart="@id/content_delivery_time"
+                    android:layout_alignLeft="@id/content_delivery_time"
+                    android:text="@string/delivery_date_mock"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/content_deadline_badge"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="Tổng tiền" />
+
+                <TextView
+                    android:id="@+id/content_deadline_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_deadline_badge"
+                    android:layout_alignStart="@id/content_deadline_badge"
+                    android:layout_alignLeft="@id/content_deadline_badge"
+                    android:text="120.000đ"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_deadline_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_deadline_time"
+                    android:layout_alignStart="@id/content_deadline_time"
+                    android:layout_alignLeft="@id/content_deadline_time"
+                    android:text="Đã thanh toán"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+        </LinearLayout>
+        <TextView
+            android:text="ĐỢI NHẬN MÓN"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:textColor="@color/green"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.stfalcon.swipeablebutton.SwipeableButton
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                app:checkedBackground="@drawable/card_edge_opacity"
+                app:checkedIcon="@drawable/ic_check"
+                app:checkedToggleBackground="@drawable/shape_checked_toggle"
+                app:durationAnimation="250"
+                app:isClickToSwipeEnable="false"
+                app:thresholdEnd="0.3"
+                app:thresholdStart="0.7"
+                app:textChecked="Đã nhận món"
+                app:textColorChecked="@color/green"
+                app:textColorUnChecked="@color/white"
+                app:textSize="8sp"
+                app:textUnchecked="Nhận món"
+                app:uncheckedBackground="@drawable/card_edge"
+                app:uncheckedIcon="@drawable/ic_map"
+                app:uncheckedToggleBackground="@drawable/shape_checked_toggle" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <!-- content header line -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bgContentTop"
+        android:paddingBottom="7dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:text="3.0 km"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/shippingFee"
+            android:text="Phí  "
+            android:textColor="@android:color/white"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/shippingFee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="30.000đ"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- content body layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bgContent"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
+
+        <!-- addresses part -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/content_from_badge"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/from_badge" />
+
+                <TextView
+                    android:id="@+id/content_from_address_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/content_from_badge"
+                    android:layout_alignStart="@id/content_from_badge"
+                    android:layout_below="@id/content_from_badge"
+                    android:text="213 Trần Hưng Đạo, P2, Quận 5"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_from_address_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/content_from_address_1"
+                    android:layout_alignStart="@id/content_from_address_1"
+                    android:layout_below="@id/content_from_address_1"
+                    android:text="Bún đậu ABC"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+            <!-- divider line -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="7dp"
+                android:src="@color/contentDividerLine" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/content_to_badge"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/to_badge" />
+
+                <TextView
+                    android:id="@+id/content_to_address_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/content_to_badge"
+                    android:layout_alignStart="@id/content_to_badge"
+                    android:layout_below="@id/content_to_badge"
+                    android:text="227 Nguyễn Văn Cừ, P4, Quận 5"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_to_address_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/content_to_address_1"
+                    android:layout_alignStart="@id/content_to_address_1"
+                    android:layout_below="@id/content_to_address_1"
+                    android:text="Chị Ngọc"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!-- divider line -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="7dp"
+            android:src="@color/contentDividerLine" />
+
+        <!-- request button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/content_delivery_date_badge"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="Nhận hàng lúc" />
+
+                <TextView
+                    android:id="@+id/content_delivery_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_delivery_date_badge"
+                    android:layout_alignStart="@id/content_delivery_date_badge"
+                    android:layout_alignLeft="@id/content_delivery_date_badge"
+                    android:text="@string/delivery_time_mock"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_delivery_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_delivery_time"
+                    android:layout_alignStart="@id/content_delivery_time"
+                    android:layout_alignLeft="@id/content_delivery_time"
+                    android:text="@string/delivery_date_mock"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/content_deadline_badge"
+                    style="@style/ContentMainBadgeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="Tổng tiền" />
+
+                <TextView
+                    android:id="@+id/content_deadline_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_deadline_badge"
+                    android:layout_alignStart="@id/content_deadline_badge"
+                    android:layout_alignLeft="@id/content_deadline_badge"
+                    android:text="120.000đ"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_deadline_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/content_deadline_time"
+                    android:layout_alignStart="@id/content_deadline_time"
+                    android:layout_alignLeft="@id/content_deadline_time"
+                    android:text="Đã thanh toán"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.stfalcon.swipeablebutton.SwipeableButton
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_margin="20dp"
+                app:checkedBackground="@drawable/card_edge_opacity"
+                app:checkedIcon="@drawable/ic_check"
+                app:checkedToggleBackground="@drawable/shape_checked_toggle"
+                app:durationAnimation="250"
+                app:isClickToSwipeEnable="false"
+                app:thresholdEnd="0.3"
+                app:thresholdStart="0.7"
+                app:textChecked="Đã nhận đơn"
+                app:textColorChecked="@color/green"
+                app:textColorUnChecked="@color/white"
+                app:textSize="8sp"
+                app:textUnchecked="Nhận đơn (30s)"
+                app:uncheckedBackground="@drawable/card_edge"
+                app:uncheckedIcon="@drawable/ic_map"
+                app:uncheckedToggleBackground="@drawable/shape_checked_toggle" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

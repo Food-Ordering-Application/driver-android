@@ -15,8 +15,8 @@
     <string name="sender_badge" translatable="false">SENDER</string>
     <string name="client_name_mock" translatable="false">Edward Norton</string>
     <string name="rating_mock" translatable="false">(26)</string>
-    <string name="from_badge" translatable="false">FROM</string>
-    <string name="to_badge" translatable="false">TO</string>
+    <string name="from_badge" translatable="false">TỪ</string>
+    <string name="to_badge" translatable="false">ĐẾN</string>
     <string name="delivery_date_badge" translatable="false">DELIVERY DATE</string>
     <string name="delivery_time_mock" translatable="false">6:30</string>
     <string name="delivery_date_mock" translatable="false">15/06/2021</string>
@@ -35,4 +35,5 @@
     <string name="error_user_or_password">Tên đăng nhập hoặc mật khẩu không đúng</string>
     <string name="login_failed">"Đăng nhập thất bại"</string>
     <string name="login">ĐĂNG NHẬP</string>
+    <string name="mapbox_access_token">sk.eyJ1IjoidmlldGhvYW5nIiwiYSI6ImNrcGU1azhkcjA0dTQyb3JpMmN6cHdub2QifQ.RUAcv3PzKx__shBaqINccg</string>
 </resources>
