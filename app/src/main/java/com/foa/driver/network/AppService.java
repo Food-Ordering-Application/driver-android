@@ -2,6 +2,8 @@ package com.foa.driver.network;
 
 import com.foa.driver.network.body.LoginBody;
 import com.foa.driver.network.response.LoginData;
+import com.foa.driver.network.response.OrderData;
+import com.foa.driver.network.response.OrderListData;
 import com.foa.driver.network.response.ResponseAdapter;
 
 import retrofit2.Call;
@@ -19,6 +21,18 @@ public interface AppService {
     @POST("/user/driver/login")
     Call<ResponseAdapter<LoginData>> login (
             @Body LoginBody login
+    );
+
+    @GET("/order/{orderId}")
+    Call<ResponseAdapter<OrderData>> getOrderById(
+            @Path("orderId") String orderId
+    );
+
+
+    @GET(" /order/driver/{driverId}/list-order")
+    Call<ResponseAdapter<OrderListData>> getAllOrder(
+            @Path("driverId") String orderId,
+            @Query("query") String status
     );
 
 }

@@ -12,6 +12,7 @@ import com.foa.driver.dialog.LoadingDialog;
 import com.foa.driver.network.response.LoginData;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -64,6 +65,17 @@ public final class Helper
 		editor.apply();
 	}
 
+	public static String formatMoney(long monney){
+		Locale localeVN = new Locale("vi", "VN");
+		NumberFormat currencyVN = NumberFormat.getCurrencyInstance(localeVN);
+		return currencyVN.format(monney);
+	}
+
+	public static String formatDistance(float distance){
+		DecimalFormat df = new DecimalFormat("#.00");
+		 return df.format(distance) + " Km";
+	}
+
 	static public void setLoginData(LoginData loginData){
 		com.foa.driver.util.Helper.write(Constants.DRIVER_ID,loginData.getDriver().getId());
 		com.foa.driver.util.Helper.write(Constants.BEARER_ACCESS_TOKEN,loginData.getBearerAccessToken());
@@ -78,6 +90,18 @@ public final class Helper
 		loading.dismiss();
 		YoYo.with(Techniques.Shake).duration(700).playOn(wrapper);
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
+
+	public static void setTimeout(Runnable runnable, int delay){
+		new Thread(() -> {
+			try {
+				Thread.sleep(delay);
+				runnable.run();
+			}
+			catch (Exception e){
+				System.err.println(e);
+			}
+		}).start();
 	}
 	
 }

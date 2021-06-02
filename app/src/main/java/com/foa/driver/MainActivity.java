@@ -9,15 +9,28 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.foa.driver.api.OrderService;
 import com.foa.driver.dialog.NewDeliveryDialog;
+import com.foa.driver.model.Order;
+import com.foa.driver.model.enums.DeliveryStatus;
+import com.foa.driver.network.IDataResultCallback;
 import com.foa.driver.service.NotificationService;
+import com.foa.driver.session.DriverMode;
+import com.foa.driver.session.LoginSession;
+import com.foa.driver.session.OrderSession;
+import com.foa.driver.util.Helper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.messaging.RemoteMessage;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.pusher.pushnotifications.PushNotificationReceivedListener;
+import com.pusher.pushnotifications.PushNotifications;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +48,8 @@ public class MainActivity extends AppCompatActivity  {
     private final int LOCATION_REQUEST_CODE = 1999;
     private final String CHANNEL_ID = "123";
     private final int notificationId = 93;
+    private NavController navController;
+    private TextView countDownAcceptTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +57,11 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_orders, R.id.navigation_map, R.id.navigation_profile,R.id.navigation_notification,
-                R.id.navigation_statistic)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupWithNavController(navView, navController);
 
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupWithNavController(navView, navController);
         if(ActivityCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
 
@@ -57,49 +69,32 @@ public class MainActivity extends AppCompatActivity  {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
         }
+
+        PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
+        PushNotifications.addDeviceInterest("debug-hello");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, remoteMessage -> {
+            this.runOnUiThread(() -> {
+                OrderService.getOrderById("af4a03a3-c85f-4773-a62b-11c71774a50e", (success, data) -> {
+                    if (success){
+                        NewDeliveryDialog dialog =  new NewDeliveryDialog(this, data);
+                        dialog.setAcceptedListener((isAccept,order) -> {
+                            if (isAccept){
+                                OrderSession.setInstance(order);
+                                DriverMode.setInstance(true);
+                                navController.navigate(R.id.navigation_map);
+                            }
+                            dialog.dismiss();
+                        });
+                        dialog.show();
+                    }
+                });
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setContentTitle("Noti name")
-                .setContentText("Content")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true)
-                .addAction(R.drawable.ic_dashboard_black_24dp, "Chấp nhận",
-                        pendingIntent)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."));
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(notificationId, mBuilder.build());
-
-        //services
-
-        Intent backgroundServiceIntent=new Intent(this, NotificationService.class);
-        Button btn_startService=findViewById(R.id.btn_startService);
-        Button btn_stopBoundService=findViewById(R.id.btn_stopService);
-
-        btn_startService.setOnClickListener(v->{
-
-            startService(backgroundServiceIntent);
-            btn_startService.setEnabled(false);
-            btn_stopBoundService.setEnabled(true);
-
-        });
-
-
-
-        btn_stopBoundService.setOnClickListener(v->{
-            stopService(backgroundServiceIntent);
-            btn_startService.setEnabled(true);
-            btn_stopBoundService.setEnabled(false);
+            });
         });
     }
 

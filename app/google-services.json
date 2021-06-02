@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "380349122330",
+    "project_id": "driver-android-pusher",
+    "storage_bucket": "driver-android-pusher.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380349122330:android:1775f2d757d211969f0ea3",
+        "android_client_info": {
+          "package_name": "com.foa.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380349122330-rvqtaj0dd5g8f0nnntj6k7ntpqp7r9dg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE8GQxWOvdEXDRQxkV_wORYm2C_wj4Nfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380349122330-rvqtaj0dd5g8f0nnntj6k7ntpqp7r9dg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

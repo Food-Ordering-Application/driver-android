@@ -17,6 +17,7 @@
         android:paddingTop="7dp">
 
         <TextView
+            android:id="@+id/deliveryDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -29,13 +30,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/shippingFee"
+            android:layout_toStartOf="@+id/deliveryShippingFee"
             android:text="Phí  "
             android:textColor="@android:color/white"
             android:textSize="18sp"/>
 
         <TextView
-            android:id="@+id/shippingFee"
+            android:id="@+id/deliveryShippingFee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -81,7 +82,7 @@
                     android:text="@string/from_badge" />
 
                 <TextView
-                    android:id="@+id/content_from_address_1"
+                    android:id="@+id/restaurantAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@id/content_from_badge"
@@ -93,12 +94,12 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/content_from_address_2"
+                    android:id="@+id/restaurantName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/content_from_address_1"
-                    android:layout_alignStart="@id/content_from_address_1"
-                    android:layout_below="@id/content_from_address_1"
+                    android:layout_alignLeft="@id/restaurantAddress"
+                    android:layout_alignStart="@id/restaurantAddress"
+                    android:layout_below="@id/restaurantAddress"
                     android:text="Bún đậu ABC"
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
@@ -127,7 +128,7 @@
                     android:text="@string/to_badge" />
 
                 <TextView
-                    android:id="@+id/content_to_address_1"
+                    android:id="@+id/customerAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@id/content_to_badge"
@@ -139,12 +140,12 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/content_to_address_2"
+                    android:id="@+id/customerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/content_to_address_1"
-                    android:layout_alignStart="@id/content_to_address_1"
-                    android:layout_below="@id/content_to_address_1"
+                    android:layout_alignLeft="@id/customerAddress"
+                    android:layout_alignStart="@id/customerAddress"
+                    android:layout_below="@id/customerAddress"
                     android:text="Chị Ngọc"
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
@@ -183,7 +184,7 @@
                     android:text="Nhận hàng lúc" />
 
                 <TextView
-                    android:id="@+id/content_delivery_time"
+                    android:id="@+id/estimateTimeDelivery"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/content_delivery_date_badge"
@@ -193,17 +194,6 @@
                     android:textColor="@color/mainTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/content_delivery_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/content_delivery_time"
-                    android:layout_alignStart="@id/content_delivery_time"
-                    android:layout_alignLeft="@id/content_delivery_time"
-                    android:text="@string/delivery_date_mock"
-                    android:textColor="@color/mainTextColor"
-                    android:textSize="14sp" />
 
             </RelativeLayout>
 
@@ -222,7 +212,7 @@
                     android:text="Tổng tiền" />
 
                 <TextView
-                    android:id="@+id/content_deadline_time"
+                    android:id="@+id/grandTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/content_deadline_badge"
@@ -234,12 +224,12 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/content_deadline_date"
+                    android:id="@+id/paymentStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/content_deadline_time"
-                    android:layout_alignStart="@id/content_deadline_time"
-                    android:layout_alignLeft="@id/content_deadline_time"
+                    android:layout_below="@id/grandTotal"
+                    android:layout_alignStart="@id/grandTotal"
+                    android:layout_alignLeft="@id/grandTotal"
                     android:text="Đã thanh toán"
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
@@ -247,13 +237,14 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <com.stfalcon.swipeablebutton.SwipeableButton
+                android:id="@+id/acceptSwipeButton"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 app:checkedBackground="@drawable/card_edge_opacity"
                 app:checkedIcon="@drawable/ic_check"
@@ -262,15 +253,33 @@
                 app:isClickToSwipeEnable="false"
                 app:thresholdEnd="0.3"
                 app:thresholdStart="0.7"
-                app:textChecked="Đã nhận đơn"
+                app:textChecked="Đã nhận đơn   "
                 app:textColorChecked="@color/green"
                 app:textColorUnChecked="@color/white"
-                app:textSize="8sp"
-                app:textUnchecked="Nhận đơn (30s)"
+                app:textSize="10sp"
+                app:textUnchecked="Nhận đơn   "
                 app:uncheckedBackground="@drawable/card_edge"
                 app:uncheckedIcon="@drawable/ic_map"
                 app:uncheckedToggleBackground="@drawable/shape_checked_toggle" />
-
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/countDownAcceptTime"
+                    android:text="30"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/secondText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/secondText"
+                    android:text="s"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
