@@ -43,19 +43,6 @@
 
     </RelativeLayout>
 
-    <!-- content header image -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/head_image"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/map_default" />
-    </RelativeLayout>
-
     <!-- content body layout -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -322,36 +309,6 @@
                 android:text="25.000đ"
                 android:textSize="24sp"
                 android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_weight="1"
-                android:id="@+id/content_request_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@color/btnRequest"
-                android:padding="10dp"
-                android:text="CHẤP NHẬN"
-                android:textAlignment="center"
-                android:textColor="@color/mainTextColor"
-                android:textSize="20sp" />
-            <TextView
-                android:layout_weight="1"
-                android:id="@+id/content_cancel_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@color/red"
-                android:padding="10dp"
-                android:text="HUỶ"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

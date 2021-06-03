@@ -1,46 +1,26 @@
 package com.foa.driver;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.foa.driver.api.OrderService;
 import com.foa.driver.dialog.NewDeliveryDialog;
-import com.foa.driver.model.Order;
-import com.foa.driver.model.enums.DeliveryStatus;
-import com.foa.driver.network.IDataResultCallback;
-import com.foa.driver.service.NotificationService;
-import com.foa.driver.session.DriverMode;
-import com.foa.driver.session.LoginSession;
+import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.OrderSession;
-import com.foa.driver.util.Helper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.messaging.RemoteMessage;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.pusher.pushnotifications.PushNotificationReceivedListener;
 import com.pusher.pushnotifications.PushNotifications;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity  {
@@ -85,7 +65,7 @@ public class MainActivity extends AppCompatActivity  {
                         dialog.setAcceptedListener((isAccept,order) -> {
                             if (isAccept){
                                 OrderSession.setInstance(order);
-                                DriverMode.setInstance(true);
+                                DriverModeSession.setInstance(true);
                                 navController.navigate(R.id.navigation_map);
                             }
                             dialog.dismiss();

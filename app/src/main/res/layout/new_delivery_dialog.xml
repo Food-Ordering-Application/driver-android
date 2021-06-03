@@ -259,7 +259,7 @@
                 app:textSize="10sp"
                 app:textUnchecked="Nhận đơn   "
                 app:uncheckedBackground="@drawable/card_edge"
-                app:uncheckedIcon="@drawable/ic_map"
+                app:uncheckedIcon="@drawable/ic_double_arrow"
                 app:uncheckedToggleBackground="@drawable/shape_checked_toggle" />
                 <TextView
                     android:id="@+id/countDownAcceptTime"

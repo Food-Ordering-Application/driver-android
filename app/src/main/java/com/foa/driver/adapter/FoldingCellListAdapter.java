@@ -49,8 +49,6 @@ public class FoldingCellListAdapter extends ArrayAdapter<Item> {
             viewHolder.fromAddress = cell.findViewById(R.id.title_from_address);
             viewHolder.toAddress = cell.findViewById(R.id.title_to_address);
             viewHolder.requestsCount = cell.findViewById(R.id.title_requests_count);
-            //viewHolder.pledgePrice = cell.findViewById(R.id.title_pledge);
-            viewHolder.contentRequestBtn = cell.findViewById(R.id.content_request_btn);
             cell.setTag(viewHolder);
         } else {
             // for existing cell set valid valid state(without animation)

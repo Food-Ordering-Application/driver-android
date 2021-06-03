@@ -1,10 +1,10 @@
 package com.foa.driver.session;
 
 
-public class DriverMode {
+public class DriverModeSession {
     private static boolean isDriving = false;
 
-    public DriverMode() {
+    public DriverModeSession() {
     }
 
     public static boolean getInstance(){
@@ -12,6 +12,6 @@ public class DriverMode {
     }
 
     public static void setInstance(boolean isDriving){
-        DriverMode.isDriving = isDriving;
+        DriverModeSession.isDriving = isDriving;
     }
 }

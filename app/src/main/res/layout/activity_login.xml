@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:background="@color/bg_default">
 
     <LinearLayout
         android:id="@+id/loginWrapper"
@@ -45,7 +45,7 @@
             app:errorEnabled="true"
             android:hint="Mật khẩu"
             android:paddingBottom="10dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtPassword"
@@ -65,6 +65,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/login"
             android:background="@color/primaryColor"
+            android:layout_marginBottom="10dp"
             />
     </LinearLayout>
 

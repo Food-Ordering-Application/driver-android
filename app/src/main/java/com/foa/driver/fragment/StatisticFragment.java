@@ -34,17 +34,10 @@ public class StatisticFragment extends Fragment {
         for (StatisticItem i:list) {
             entries.add(new BarEntry(i.getId(), i.getValue()));
         }
-        BarDataSet barDataSet= new BarDataSet(entries,"Name");
+        BarDataSet barDataSet= new BarDataSet(entries,"Thu nhập");
         BarData barData = new BarData(barDataSet);
         chart.setData(barData);
         chart.invalidate();
-        ListView dataList = root.findViewById(R.id.list);
-        List<String> sampleList = new ArrayList<String>();
-            sampleList.add("item 1");
-            sampleList.add("item 2");
-            sampleList.add("item 3");
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,sampleList);
-        dataList.setAdapter(adapter);
         return root;
     }
 }

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -20,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.foa.driver.MainActivity;
 import com.foa.driver.R;
 import com.foa.driver.model.Order;
-import com.foa.driver.session.DriverMode;
+import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.OrderSession;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.mapbox.android.core.location.LocationEngine;
@@ -105,12 +104,13 @@ public class MapFragment extends Fragment implements PermissionsListener {
 
         ConstraintLayout bottomSheetLayout = root.findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-        if (DriverMode.getInstance()){
+        if (DriverModeSession.getInstance()){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             currentOrder = OrderSession.getInstance();
             if (currentOrder!=null){
                 List<Float> customerLatLng = currentOrder.getDelivery().getCustomerGeom().getCoordinates();
                 destination = Point.fromLngLat(customerLatLng.get(1),customerLatLng.get(0));
+                initSwipeButton();
             }
         }else{
             root.setLayoutParams(new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
@@ -135,9 +135,9 @@ public class MapFragment extends Fragment implements PermissionsListener {
             origin = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                     locationComponent.getLastKnownLocation().getLatitude());
             Location currentLocation = locationComponent.getLastKnownLocation();
-
             cameraPositionUpdate(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-            if (DriverMode.getInstance()){
+
+            if (DriverModeSession.getInstance()){
                 getSingleRoute(origin);
             }
         }));
@@ -235,7 +235,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
                 }
 
                 Point origin = Point.fromLngLat(result.getLastLocation().getLongitude(), result.getLastLocation().getLatitude());
-                if (DriverMode.getInstance()){
+                if (DriverModeSession.getInstance()){
                     cameraPositionUpdate(new LatLng(result.getLastLocation().getLatitude(), result.getLastLocation().getLongitude()));
                     getSingleRoute(origin);
                 }

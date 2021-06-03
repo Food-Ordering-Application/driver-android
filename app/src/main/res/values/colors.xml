@@ -40,6 +40,8 @@
     <color name="mainTextColor">#343d43</color>
     <color name="btnRequest">#ffbf12</color>
 
-
+    <color name="grey">#E9EAEE</color>
+    <color name="goodgrey">#535353</color>
+    <color name="lightgrey">#EEEEEE</color>
 
 </resources>
