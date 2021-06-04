@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.TextView;
 
 import com.foa.driver.api.OrderService;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity  {
 
         PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
         PushNotifications.addDeviceInterest("debug-hello");
+
+
     }
 
     @Override

@@ -147,11 +147,11 @@ public class MapFragment extends Fragment implements PermissionsListener {
     }
 
     private void initSwipeButton(){
-        changeStatusOrderSwipeButton  = root.findViewById(R.id.changeStatusOrderSwipeButton);
-        changeStatusOrderSwipeButton.setOnSwipedOnListener(()-> {
-
-            return Unit.INSTANCE;
-        });
+//        changeStatusOrderSwipeButton  = root.findViewById(R.id.changeStatusOrderSwipeButton);
+//        changeStatusOrderSwipeButton.setOnSwipedOnListener(()-> {
+//
+//            return Unit.INSTANCE;
+//        });
     }
 
     private void cameraPositionUpdate(LatLng location) {

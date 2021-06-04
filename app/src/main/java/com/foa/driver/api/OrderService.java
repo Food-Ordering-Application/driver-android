@@ -3,7 +3,12 @@ package com.foa.driver.api;
 
 import com.foa.driver.model.Order;
 import com.foa.driver.network.IDataResultCallback;
+import com.foa.driver.network.IResultCallback;
 import com.foa.driver.network.RetrofitClient;
+import com.foa.driver.network.body.ApproveDepositBody;
+import com.foa.driver.network.body.CreateDepositBody;
+import com.foa.driver.network.body.WithdrawMoneyBody;
+import com.foa.driver.network.response.CreateDepositData;
 import com.foa.driver.network.response.OrderData;
 import com.foa.driver.network.response.OrderListData;
 import com.foa.driver.network.response.ResponseAdapter;
@@ -49,13 +54,9 @@ public class OrderService {
     }
 
 
-    public static void getAllOrder(String driverId, String status, IDataResultCallback<List<Order>> resultCallback) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        //String strStartDate = Helper.dateSQLiteFormat.format(calendar.getTime());
-        //calendar.add(Calendar.DATE,1);
-        //String strEndDate = Helper.dateSQLiteFormat.format(calendar.getTime());
+    public static void getAllOrder(String driverId, String status,String startDate, String endDate, IDataResultCallback<List<Order>> resultCallback) {
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .getAllOrder(driverId, status);
+                .getAllOrder(driverId, status, startDate,endDate);
         responseCall.enqueue(new Callback<ResponseAdapter<OrderListData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderListData>> call, Response<ResponseAdapter<OrderListData>> response) {
@@ -76,6 +77,168 @@ public class OrderService {
             @Override
             public void onFailure(Call<ResponseAdapter<OrderListData>> call, Throwable t) {
                 resultCallback.onSuccess(false, null);
+            }
+        });
+    }
+
+    public static void acceptOrder(String orderId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .acceptOrder(orderId);
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+    public static void pickupOrder(String orderId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .pickupOrder(orderId);
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+    public static void completeOrder(String orderId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .completeOrder(orderId);
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+    public static void createDepositMoneyToMainWallet(String driverId,long moneyToDeposit, IDataResultCallback<String> resultCallback) {
+        Call<ResponseAdapter<CreateDepositData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .createDepositMoneyToMainWallet(driverId,new CreateDepositBody(moneyToDeposit));
+        responseCall.enqueue(new Callback<ResponseAdapter<CreateDepositData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<CreateDepositData>> call, Response<ResponseAdapter<CreateDepositData>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<CreateDepositData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true,res.getData().getPaypalOrderId());
+                    } else {
+                        resultCallback.onSuccess(false,null);
+                    }
+                } else {
+                    resultCallback.onSuccess(false,null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<CreateDepositData>> call, Throwable t) {
+                resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
+    public static void approveDepositMoneyToMainWallet(String driverId,String paypalOrderId, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .approveDepositMoneyToMainWallet(driverId,new ApproveDepositBody(paypalOrderId));
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+    public static void withdrawMoneyToPayPalAccount(String driverId,String moneyToWithdraw, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .withdrawMoneyToPayPalAccount(driverId,new WithdrawMoneyBody(moneyToWithdraw));
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
             }
         });
     }

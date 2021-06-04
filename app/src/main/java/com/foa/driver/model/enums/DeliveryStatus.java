@@ -1,6 +1,12 @@
 package com.foa.driver.model.enums;
 
 public enum DeliveryStatus {
-    ACTIVE,
-    COMPLETED
+    DRAFT,
+    ASSIGNING_DRIVER,
+    ON_GOING,
+    PICKED_UP ,
+    COMPLETED ,
+    CANCELLED ,
+    EXPIRED
+    //ON_GOING OR PICKED_UP = ACTIVE
 }

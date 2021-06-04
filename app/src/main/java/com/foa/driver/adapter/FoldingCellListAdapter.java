@@ -77,7 +77,7 @@ public class FoldingCellListAdapter extends ArrayAdapter<Item> {
             viewHolder.contentRequestBtn.setOnClickListener(item.getRequestBtnClickListener());
         } else {
             // (optionally) add "default" handler if no handler found in item
-            viewHolder.contentRequestBtn.setOnClickListener(defaultRequestBtnClickListener);
+            //viewHolder.contentRequestBtn.setOnClickListener(defaultRequestBtnClickListener);
         }
 
         return cell;

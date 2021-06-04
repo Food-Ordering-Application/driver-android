@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <!-- content header line -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bgContentTop"
+        android:paddingBottom="7dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="7dp">
+        <TextView
+            android:id="@+id/deliveryShippingFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="Nạp tiền"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- content body layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bgContent"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            app:endIconMode="clear_text"
+            android:labelFor="@+id/txtUserName"
+            app:helperText="Bội số của 1000đ"
+            app:errorEnabled="true"
+            android:hint=" Số tiền"
+            android:paddingBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/moneyInput"
+                android:layout_height="60dp"
+                android:layout_width="match_parent"
+                android:textColor="@color/text_gray"
+                android:ems="10"
+                android:singleLine="true"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.paypal.checkout.paymentbutton.PayPalButton
+            android:id="@+id/payPalButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            />
+    </LinearLayout>
+</LinearLayout>
