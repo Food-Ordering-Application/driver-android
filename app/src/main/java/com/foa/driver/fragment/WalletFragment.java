@@ -9,13 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.foa.driver.BuildConfig;
 import com.foa.driver.R;
 import com.foa.driver.api.OrderService;
+import com.foa.driver.api.UserService;
 import com.foa.driver.dialog.CreateDepositDialog;
+import com.foa.driver.model.AccountWallet;
+import com.foa.driver.network.IDataResultCallback;
 import com.foa.driver.network.IResultCallback;
 import com.foa.driver.session.LoginSession;
+import com.foa.driver.util.Helper;
 import com.paypal.checkout.approve.Approval;
 import com.paypal.checkout.approve.OnApprove;
 import com.paypal.checkout.createorder.CreateOrder;
@@ -40,6 +45,7 @@ public class WalletFragment extends Fragment {
     private View view;
     private Button depositButton;
     private Button withdrawButton;
+    private TextView mainBalanceTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,15 +58,23 @@ public class WalletFragment extends Fragment {
     private void init(){
         depositButton =  view.findViewById(R.id.depositButton);
         withdrawButton =  view.findViewById(R.id.withdrawButton);
+        mainBalanceTextView = view.findViewById(R.id.mainBalanceTextView);
+        mainBalanceTextView.setText(Helper.formatMoney(0));
 
         depositButton.setOnClickListener(view -> {
-            CreateDepositDialog dialog = new CreateDepositDialog(getActivity());
+            CreateDepositDialog dialog = new CreateDepositDialog(getActivity(),true);
             dialog.show();
         });
 
         withdrawButton.setOnClickListener(view -> {
-            CreateDepositDialog dialog = new CreateDepositDialog(getActivity());
+            CreateDepositDialog dialog = new CreateDepositDialog(getActivity(),false);
             dialog.show();
+        });
+
+        UserService.getAccountWallet(LoginSession.getInstance().getDriver().getId(), (success, data) -> {
+            if (success){
+                mainBalanceTextView.setText(Helper.formatMoney(data.getMainBalance()));
+            }
         });
     }
 }

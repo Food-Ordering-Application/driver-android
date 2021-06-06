@@ -16,7 +16,7 @@
         android:paddingRight="12dp"
         android:paddingTop="7dp">
         <TextView
-            android:id="@+id/deliveryShippingFee"
+            android:id="@+id/titleTransaction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -55,6 +55,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/moneyInput"
                 android:layout_height="60dp"
+                android:inputType="numberDecimal"
                 android:layout_width="match_parent"
                 android:textColor="@color/text_gray"
                 android:ems="10"
@@ -68,6 +69,18 @@
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
+            android:visibility="gone"
+            android:saveEnabled="false"
+            />
+        <Button
+            android:text="RÚT TIỀN"
+            android:id="@+id/withdrawButton"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:enabled="false"
             />
     </LinearLayout>
 </LinearLayout>

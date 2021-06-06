@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class WithdrawMoneyBody {
     @SerializedName("moneyToWithdraw")
-    private String moneyToWithdraw;
+    private long moneyToWithdraw;
 
-    public WithdrawMoneyBody(String moneyToWithdraw) {
+    public WithdrawMoneyBody(long moneyToWithdraw) {
         this.moneyToWithdraw = moneyToWithdraw;
     }
 }

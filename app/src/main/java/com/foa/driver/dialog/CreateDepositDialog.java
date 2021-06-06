@@ -7,13 +7,19 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.foa.driver.R;
 import com.foa.driver.api.OrderService;
+import com.foa.driver.api.UserService;
 import com.foa.driver.model.Order;
+import com.foa.driver.network.IResultCallback;
+import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.session.LoginSession;
 import com.foa.driver.util.Helper;
 import com.paypal.checkout.paymentbutton.PaymentButton;
@@ -23,11 +29,18 @@ import kotlin.Unit;
 
 public class CreateDepositDialog extends Dialog {
 
+    private Context context;
     private EditText money;
     private PaymentButton payPalButton;
+    private Button withDrawButton;
+    private boolean isDeposit;
+    private long numberMoney;
+    private TextView titleTransaction;
 
-    public CreateDepositDialog(Context context) {
+    public CreateDepositDialog(Context context, boolean isDeposit) {
         super(context);
+        this.context = context;
+        this.isDeposit = isDeposit;
     }
 
     @Override
@@ -48,7 +61,22 @@ public class CreateDepositDialog extends Dialog {
     private void init(){
         money = findViewById(R.id.moneyInput);
         payPalButton = findViewById(R.id.payPalButton);
-        payPalButton.setEnabled(false);
+        withDrawButton = findViewById(R.id.withdrawButton);
+        titleTransaction = findViewById(R.id.titleTransaction);
+        if (isDeposit){
+            initPayPal();
+            payPalButton.setVisibility(View.VISIBLE);
+            withDrawButton.setVisibility(View.GONE);
+            payPalButton.setEnabled(false);
+            titleTransaction.setText("NẠP TIỀN");
+        }else{
+            initWithdraw();
+            payPalButton.setVisibility(View.GONE);
+            withDrawButton.setVisibility(View.VISIBLE);
+            withDrawButton.setEnabled(false);
+            titleTransaction.setText("RÚT TIỀN");
+
+        }
         money.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -62,21 +90,39 @@ public class CreateDepositDialog extends Dialog {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                payPalButton.setEnabled(money.getText().toString().length()>0);
+                numberMoney = Long.parseLong(money.getText().toString());
+                boolean isEnable = numberMoney%1000==0 && numberMoney >200000;
+                payPalButton.setEnabled(isEnable);
+                withDrawButton.setEnabled(isEnable);
             }
         });
-        initPayPal();
+
+
     }
 
     private void initPayPal(){
         payPalButton.setup(
-                createOrderActions ->
-                        OrderService.createDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(), 200000, (success, paypalId) -> {
-                            createOrderActions.set(paypalId);
-                        }),
-                approval -> OrderService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), success -> {
+                createOrderActions ->{
+                    UserService.createDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(), numberMoney, (success, paypalId) -> {
+                        createOrderActions.set(paypalId);
+                    });
+                    dismiss();
+                }
+                       ,
+                approval -> UserService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), success -> {
 
                 })
         );
+    }
+
+    private void initWithdraw(){
+        withDrawButton.setOnClickListener(view -> {
+            UserService.withdrawMoneyToPayPalAccount(LoginSession.getInstance().getDriver().getId(), numberMoney, success -> {
+                if (success){
+                    dismiss();
+                }
+            });
+        });
+
     }
 }

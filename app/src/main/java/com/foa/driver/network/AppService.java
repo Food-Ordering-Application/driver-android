@@ -4,6 +4,7 @@ import com.foa.driver.network.body.ApproveDepositBody;
 import com.foa.driver.network.body.CreateDepositBody;
 import com.foa.driver.network.body.LoginBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
+import com.foa.driver.network.response.AccountWalletData;
 import com.foa.driver.network.response.CreateDepositData;
 import com.foa.driver.network.response.LoginData;
 import com.foa.driver.network.response.OrderData;
@@ -73,5 +74,10 @@ public interface AppService {
     Call<ResponseAdapter<String>> withdrawMoneyToPayPalAccount(
             @Path("driverId") String driverId,
             @Body WithdrawMoneyBody body
+    );
+
+    @GET("/user/driver/{driverId}/account-wallet")
+    Call<ResponseAdapter<AccountWalletData>> getAccountWallet(
+            @Path("driverId") String driverId
     );
 }
