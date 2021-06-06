@@ -53,6 +53,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         txtpassword = findViewById(R.id.txtPassword);
 
         loading = new LoadingDialog(this);
+
+
+
         if (getIntent().getExtras()!=null){
             Bundle bundle  = getIntent().getExtras();
             StringBuilder stringBuilder = new StringBuilder("Extras: \n");

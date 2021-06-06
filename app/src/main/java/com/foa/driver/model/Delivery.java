@@ -25,7 +25,7 @@ public class Delivery {
     @SerializedName("restaurantPhoneNumber")
     private String restaurantPhoneNumber;
     @SerializedName("restaurantGeom")
-    private Geom geom;
+    private Geom restaurantGeom;
     @SerializedName("distance")
     private float distance;
     @SerializedName("shippingFee")
@@ -127,12 +127,12 @@ public class Delivery {
         this.restaurantPhoneNumber = restaurantPhoneNumber;
     }
 
-    public Geom getGeom() {
-        return geom;
+    public Geom getRestaurantGeom() {
+        return restaurantGeom;
     }
 
-    public void setGeom(Geom geom) {
-        this.geom = geom;
+    public void setRestaurantGeom(Geom restaurantGeom) {
+        this.restaurantGeom = restaurantGeom;
     }
 
     public float getDistance() {

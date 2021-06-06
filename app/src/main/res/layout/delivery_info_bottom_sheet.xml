@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:text="213 Trần Hưng Đạo, P2, Quận 5"
                     android:textColor="@color/mainTextColor"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <!-- divider line -->
@@ -101,7 +101,7 @@
                     android:layout_below="@id/content_to_badge"
                     android:text="227 Nguyễn Văn Cừ, P4, Quận 5"
                     android:textColor="@color/mainTextColor"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -199,6 +199,7 @@
             </RelativeLayout>
         </LinearLayout>
         <TextView
+            android:id="@+id/deliveryStatus"
             android:text="ĐỢI NHẬN MÓN"
             android:textStyle="bold"
             android:textSize="22sp"
@@ -212,10 +213,21 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <Button
+                android:id="@+id/btnChangeDeliveryStatus"
                 android:text="Nhận món"
                 android:textSize="18sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/progressLoading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone">
+            <ProgressBar
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

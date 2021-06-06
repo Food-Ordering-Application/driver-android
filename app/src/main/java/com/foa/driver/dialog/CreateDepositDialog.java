@@ -71,7 +71,7 @@ public class CreateDepositDialog extends Dialog {
     private void initPayPal(){
         payPalButton.setup(
                 createOrderActions ->
-                        OrderService.createDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(), 30000, (success, paypalId) -> {
+                        OrderService.createDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(), 200000, (success, paypalId) -> {
                             createOrderActions.set(paypalId);
                         }),
                 approval -> OrderService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), success -> {

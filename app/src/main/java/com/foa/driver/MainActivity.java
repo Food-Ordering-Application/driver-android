@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.foa.driver.api.OrderService;
@@ -14,7 +15,14 @@ import com.foa.driver.dialog.NewDeliveryDialog;
 import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.OrderSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
 import com.pusher.pushnotifications.PushNotifications;
 
 import androidx.annotation.NonNull;
@@ -52,8 +60,9 @@ public class MainActivity extends AppCompatActivity  {
         }
 
         PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
-        PushNotifications.addDeviceInterest("debug-hello");
+        PushNotifications.addDeviceInterest("a22f3f78-be7f-11eb-8529-0242ac130003");
 
+        initPusher();
 
     }
 
@@ -62,21 +71,21 @@ public class MainActivity extends AppCompatActivity  {
         super.onResume();
         PushNotifications.setOnMessageReceivedListenerForVisibleActivity(this, remoteMessage -> {
             this.runOnUiThread(() -> {
-                OrderService.getOrderById("af4a03a3-c85f-4773-a62b-11c71774a50e", (success, data) -> {
-                    if (success){
-                        NewDeliveryDialog dialog =  new NewDeliveryDialog(this, data);
-                        dialog.setAcceptedListener((isAccept,order) -> {
-                            if (isAccept){
-                                OrderSession.setInstance(order);
-                                DriverModeSession.setInstance(true);
-                                navController.navigate(R.id.navigation_map);
-                            }
-                            dialog.dismiss();
-                        });
-                        dialog.show();
-                    }
-                });
-
+                String orderId = remoteMessage.getData().get("orderId");
+                if (orderId!=null){
+                    OrderService.getOrderById(orderId, (success, data) -> {
+                        if (success){
+                            NewDeliveryDialog dialog =  new NewDeliveryDialog(this, data);
+                            dialog.setAcceptedListener((isAccept,order) -> {
+                                if (isAccept){
+                                    OrderSession.setInstance(order);
+                                    navController.navigate(R.id.navigation_map);
+                                }
+                            });
+                            dialog.show();
+                        }
+                    });
+                }
             });
         });
     }
@@ -94,19 +103,27 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Notification Channel";
-            String description = "This is description";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+    private void initPusher(){
+        PusherOptions options = new PusherOptions();
+        options.setCluster("ap1");
+
+        Pusher pusher = new Pusher("29ff5ecb5e2501177186", options);
+
+        pusher.connect(new ConnectionEventListener() {
+            @Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+                Log.i("Pusher", "State changed from " + change.getPreviousState() +
+                        " to " + change.getCurrentState());
+            }
+
+            @Override
+            public void onError(String message, String code, Exception e) {
+                Log.i("Pusher", "There was a problem connecting! " +
+                        "\ncode: " + code +
+                        "\nmessage: " + message +
+                        "\nException: " + e
+                );
+            }
+        }, ConnectionState.ALL);
     }
 }

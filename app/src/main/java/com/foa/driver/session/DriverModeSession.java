@@ -1,17 +1,23 @@
 package com.foa.driver.session;
 
 
+import com.foa.driver.model.enums.DeliveryStatus;
+
 public class DriverModeSession {
-    private static boolean isDriving = false;
+    private static DeliveryStatus  deliveryStatus = DeliveryStatus.DRAFT;
 
     public DriverModeSession() {
     }
 
-    public static boolean getInstance(){
-        return isDriving;
+    public static DeliveryStatus getInstance(){
+        return deliveryStatus;
     }
 
-    public static void setInstance(boolean isDriving){
-        DriverModeSession.isDriving = isDriving;
+    public static void setInstance(DeliveryStatus isDriving){
+        DriverModeSession.deliveryStatus = isDriving;
+    }
+
+    public static void clearInstance(){
+        DriverModeSession.deliveryStatus = DeliveryStatus.DRAFT;
     }
 }

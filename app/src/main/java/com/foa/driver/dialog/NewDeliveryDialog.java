@@ -7,16 +7,23 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.foa.driver.api.OrderService;
 import com.foa.driver.model.Order;
+import com.foa.driver.model.enums.DeliveryStatus;
+import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.util.Helper;
 import com.stfalcon.swipeablebutton.SwipeableButton;
 import com.foa.driver.R;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import kotlin.Unit;
 
 public class NewDeliveryDialog extends Dialog {
 
+    private Context context;
     private AcceptedListener listener;
     private SwipeableButton acceptButton;
     private Order order;
@@ -33,6 +40,7 @@ public class NewDeliveryDialog extends Dialog {
     public NewDeliveryDialog(Context context, Order order) {
         super(context);
         this.order = order;
+        this.context = context;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class NewDeliveryDialog extends Dialog {
     @Override
     protected void onStart() {
         super.onStart();
-        new CountDownTimer(15000, 1000) {
+        new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 countDownAcceptTime.setText(String.valueOf(millisUntilFinished / 1000));
             }
@@ -63,8 +71,21 @@ public class NewDeliveryDialog extends Dialog {
     private void init(){
         acceptButton = findViewById(R.id.acceptSwipeButton);
         acceptButton.setOnSwipedOnListener(()->{
-            if (listener!=null) listener.onAccept(true, order);
-            return Unit.INSTANCE;
+            AtomicReference<Unit> unit = new AtomicReference<>();
+            OrderService.acceptOrder(order.getId(), success -> {
+                if (success){
+                    if (listener!=null){
+                        DriverModeSession.setInstance(DeliveryStatus.ON_GOING);
+                        listener.onAccept(true, order);
+                        dismiss();
+                        unit.set(Unit.INSTANCE);
+                    }
+                }else{
+                    Toast.makeText(context, "Lỗi", Toast.LENGTH_SHORT).show();
+                }
+
+            });
+            return unit.get();
         });
         countDownAcceptTime  = findViewById(R.id.countDownAcceptTime);
 
