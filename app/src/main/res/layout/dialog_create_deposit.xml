@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             app:endIconMode="clear_text"
             android:labelFor="@+id/txtUserName"
-            app:helperText="Bội số của 1000đ"
+            app:helperText="Trên 200.000đ và bội số của 1000đ"
             app:errorEnabled="true"
             android:hint=" Số tiền"
             android:paddingBottom="10dp"

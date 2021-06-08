@@ -5,11 +5,13 @@ import com.foa.driver.network.body.CreateDepositBody;
 import com.foa.driver.network.body.LoginBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
+import com.foa.driver.network.response.ApproveDepositData;
 import com.foa.driver.network.response.CreateDepositData;
 import com.foa.driver.network.response.LoginData;
 import com.foa.driver.network.response.OrderData;
 import com.foa.driver.network.response.OrderListData;
 import com.foa.driver.network.response.ResponseAdapter;
+import com.foa.driver.network.response.TransactionListData;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -65,7 +67,7 @@ public interface AppService {
     );
 
     @PATCH("/user/driver/{driverId}/approve-deposit-money-to-main-wallet")
-    Call<ResponseAdapter<String>> approveDepositMoneyToMainWallet(
+    Call<ResponseAdapter<ApproveDepositData>> approveDepositMoneyToMainWallet(
             @Path("driverId") String driverId,
             @Body ApproveDepositBody body
     );
@@ -80,4 +82,14 @@ public interface AppService {
     Call<ResponseAdapter<AccountWalletData>> getAccountWallet(
             @Path("driverId") String driverId
     );
+
+    @GET("/user/driver/{driverId}/transaction-histories")
+    Call<ResponseAdapter<TransactionListData>> getTransactionHistory(
+            @Path("driverId") String driverId,
+            @Query("query") String type,
+            @Query("page") int page,
+            @Query("size") int size,
+            @Query("transactionStatus") String transactionStatus
+    );
+
 }

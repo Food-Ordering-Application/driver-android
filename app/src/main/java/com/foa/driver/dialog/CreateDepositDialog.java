@@ -36,6 +36,7 @@ public class CreateDepositDialog extends Dialog {
     private boolean isDeposit;
     private long numberMoney;
     private TextView titleTransaction;
+    private BalanceChangeListener listener;
 
     public CreateDepositDialog(Context context, boolean isDeposit) {
         super(context);
@@ -67,7 +68,6 @@ public class CreateDepositDialog extends Dialog {
             initPayPal();
             payPalButton.setVisibility(View.VISIBLE);
             withDrawButton.setVisibility(View.GONE);
-            payPalButton.setEnabled(false);
             titleTransaction.setText("NẠP TIỀN");
         }else{
             initWithdraw();
@@ -109,8 +109,8 @@ public class CreateDepositDialog extends Dialog {
                     dismiss();
                 }
                        ,
-                approval -> UserService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), success -> {
-
+                approval -> UserService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), (success,mainBalance) -> {
+                    if (listener!=null) listener.onChange(mainBalance);
                 })
         );
     }
@@ -124,5 +124,13 @@ public class CreateDepositDialog extends Dialog {
             });
         });
 
+    }
+
+    public void setBalanceChangeListener(BalanceChangeListener listener){
+        this.listener = listener;
+    }
+
+    public interface BalanceChangeListener{
+        void onChange(Long balance);
     }
 }

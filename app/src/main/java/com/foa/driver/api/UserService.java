@@ -2,7 +2,10 @@ package com.foa.driver.api;
 
 
 import com.foa.driver.model.AccountWallet;
+import com.foa.driver.model.DriverTransaction;
 import com.foa.driver.model.Order;
+import com.foa.driver.model.enums.TransactionStatus;
+import com.foa.driver.model.enums.TransactionType;
 import com.foa.driver.network.IDataResultCallback;
 import com.foa.driver.network.IResultCallback;
 import com.foa.driver.network.RetrofitClient;
@@ -10,10 +13,12 @@ import com.foa.driver.network.body.ApproveDepositBody;
 import com.foa.driver.network.body.CreateDepositBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
+import com.foa.driver.network.response.ApproveDepositData;
 import com.foa.driver.network.response.CreateDepositData;
 import com.foa.driver.network.response.OrderData;
 import com.foa.driver.network.response.OrderListData;
 import com.foa.driver.network.response.ResponseAdapter;
+import com.foa.driver.network.response.TransactionListData;
 import com.foa.driver.util.Constants;
 
 import java.util.List;
@@ -51,29 +56,29 @@ public class UserService {
         });
     }
 
-    public static void approveDepositMoneyToMainWallet(String driverId,String paypalOrderId, IResultCallback resultCallback) {
-        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+    public static void approveDepositMoneyToMainWallet(String driverId,String paypalOrderId, IDataResultCallback<Long> resultCallback) {
+        Call<ResponseAdapter<ApproveDepositData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .approveDepositMoneyToMainWallet(driverId,new ApproveDepositBody(paypalOrderId));
-        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+        responseCall.enqueue(new Callback<ResponseAdapter<ApproveDepositData>>() {
             @Override
-            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+            public void onResponse(Call<ResponseAdapter<ApproveDepositData>> call, Response<ResponseAdapter<ApproveDepositData>> response) {
                 if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-                    ResponseAdapter<String> res = response.body();
+                    ResponseAdapter<ApproveDepositData> res = response.body();
                     assert res != null;
                     if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-                        resultCallback.onSuccess(true);
+                        resultCallback.onSuccess(true,res.getData().getMainBalance());
                     } else {
-                        resultCallback.onSuccess(false);
+                        resultCallback.onSuccess(false,null);
                     }
                 } else {
-                    resultCallback.onSuccess(false);
+                    resultCallback.onSuccess(false,null);
                 }
 
             }
 
             @Override
-            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
-                resultCallback.onSuccess(false);
+            public void onFailure(Call<ResponseAdapter<ApproveDepositData>> call, Throwable t) {
+                resultCallback.onSuccess(false,null);
             }
         });
     }
@@ -127,6 +132,33 @@ public class UserService {
 
             @Override
             public void onFailure(Call<ResponseAdapter<AccountWalletData>> call, Throwable t) {
+                resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
+    public static void getTransactionHistory(String driverId, IDataResultCallback<List<DriverTransaction>> resultCallback) {
+        Call<ResponseAdapter<TransactionListData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getTransactionHistory(driverId, TransactionType.ALL.name(),1,5,TransactionStatus.ALL.name());
+        responseCall.enqueue(new Callback<ResponseAdapter<TransactionListData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<TransactionListData>> call, Response<ResponseAdapter<TransactionListData>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<TransactionListData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true,res.getData().getDriverTransactions());
+                    } else {
+                        resultCallback.onSuccess(false,null);
+                    }
+                } else {
+                    resultCallback.onSuccess(false,null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<TransactionListData>> call, Throwable t) {
                 resultCallback.onSuccess(false,null);
             }
         });

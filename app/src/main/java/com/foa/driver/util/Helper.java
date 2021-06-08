@@ -10,6 +10,8 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.foa.driver.dialog.LoadingDialog;
 import com.foa.driver.network.response.LoginData;
+
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -24,6 +26,8 @@ public final class Helper
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	public static SimpleDateFormat dateSQLiteFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public static SimpleDateFormat dateTimeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	public static SimpleDateFormat dateTimeformat2 = new SimpleDateFormat("HH:mm yyyy-MM-dd");
+	public static DateFormat dateUTCFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	public static DecimalFormat decimalformat = new DecimalFormat("#.###");
 	public static void initialize(Context base)
