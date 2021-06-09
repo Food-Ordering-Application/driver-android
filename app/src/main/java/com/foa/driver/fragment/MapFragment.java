@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import com.foa.driver.MapNavigationActivity;
 import com.foa.driver.R;
 import com.foa.driver.api.OrderService;
 import com.foa.driver.dialog.QRDialog;
@@ -89,7 +90,7 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
 
-public class MapFragment extends Fragment implements PermissionsListener{
+public class MapFragment extends Fragment implements PermissionsListener {
 
     private View root;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -180,6 +181,7 @@ public class MapFragment extends Fragment implements PermissionsListener{
 
             addDestinationIconSymbolLayer(style);
 
+
             button = root.findViewById(R.id.startButton);
             button.setOnClickListener(v -> {
                 boolean simulateRoute = true;
@@ -197,7 +199,6 @@ public class MapFragment extends Fragment implements PermissionsListener{
                 List<Float> customerLngLat = currentOrder.getDelivery().getCustomerGeom().getCoordinates();
                 Point restaurantPoint  = Point.fromLngLat(restaurantLngLat.get(0), restaurantLngLat.get(1));
                 Point customerPoint = Point.fromLngLat(customerLngLat.get(0), customerLngLat.get(1));
-                initOrderBottomSheet(currentOrder);
                 switch (DriverModeSession.getInstance()) {
                     case ON_GOING:
                         visibleDeliveryInfo();
@@ -210,10 +211,10 @@ public class MapFragment extends Fragment implements PermissionsListener{
                     case COMPLETED:
                     case CANCELLED:
                     default:
-                        hiddenDeliveryInfo();
-                        OrderSession.clearInstance();
+                        clearRouteAndMarker(style);
                         break;
                 }
+                initOrderBottomSheet(currentOrder);
             }else{
                 CameraPosition position = new CameraPosition.Builder()
                         .zoom(15)
@@ -284,6 +285,7 @@ public class MapFragment extends Fragment implements PermissionsListener{
                         if (success) {
                             deliveryStatus.setText("ĐÃ GIAO MÓN");
                             btnChangeDeliveryStatus.setText("XONG");
+                            resetMap();
                         } else {
                             Toast.makeText(getActivity(), "Lỗi! Vui lòng thực hiện lại", Toast.LENGTH_SHORT).show();
                         }
@@ -336,6 +338,7 @@ public class MapFragment extends Fragment implements PermissionsListener{
                             navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
                         }
                         navigationMapRoute.addRoute(currentRoute);
+                        Log.e(TAG, "ROUTE CREATE");
                     }
 
                     @Override
@@ -348,6 +351,9 @@ public class MapFragment extends Fragment implements PermissionsListener{
     private void addMarkerAndGetRoute(String sourceId,Point destinationPoint ){
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
+        if (destinationPoint==null){
+            destinationPoint=originPoint;
+        }
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs(sourceId);
         if (source != null) {
@@ -399,6 +405,19 @@ public class MapFragment extends Fragment implements PermissionsListener{
         }
     }
 
+    private void clearRouteAndMarker(Style style){
+        addMarkerAndGetRoute(RESTAURANT_SOURCE_ID,null);
+        GeoJsonSource sourceRestaurant = style.getSourceAs(RESTAURANT_SOURCE_ID);
+        GeoJsonSource sourceCustomer = style.getSourceAs(CUSTOMER_SOURCE_ID);
+
+        if (sourceRestaurant != null) {
+            sourceRestaurant.setGeoJson(FeatureCollection.fromJson(""));
+        }
+
+        if (sourceCustomer!=null){
+            sourceCustomer.setGeoJson(FeatureCollection.fromJson(""));
+        }
+    }
 
     @Override
     public void onStart() {
@@ -441,4 +460,5 @@ public class MapFragment extends Fragment implements PermissionsListener{
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
 }
