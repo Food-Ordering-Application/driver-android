@@ -3,6 +3,7 @@ package com.foa.driver.network;
 import com.foa.driver.network.body.ApproveDepositBody;
 import com.foa.driver.network.body.CreateDepositBody;
 import com.foa.driver.network.body.LoginBody;
+import com.foa.driver.network.body.UpdateActiveBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
 import com.foa.driver.network.response.ApproveDepositData;
@@ -92,4 +93,9 @@ public interface AppService {
             @Query("transactionStatus") String transactionStatus
     );
 
+    @PATCH("/user/driver/{driverId}/update-isactive")
+    Call<ResponseAdapter<String>> updateIsActive(
+            @Path("driverId") String driverId,
+            @Body UpdateActiveBody body
+    );
 }

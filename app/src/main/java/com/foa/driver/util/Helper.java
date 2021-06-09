@@ -3,71 +3,49 @@ package com.foa.driver.util;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.foa.driver.dialog.LoadingDialog;
 import com.foa.driver.network.response.LoginData;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
+import java.util.Date;
 
 public final class Helper
 {
-	private static ContextWrapper instance;
-	private static SharedPreferences pref;
 
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	public static SimpleDateFormat dateSQLiteFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public static SimpleDateFormat dateTimeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	public static SimpleDateFormat dateTimeformat2 = new SimpleDateFormat("HH:mm yyyy-MM-dd");
-	public static DateFormat dateUTCFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 	public static DecimalFormat decimalformat = new DecimalFormat("#.###");
-	public static void initialize(Context base)
-	{
-		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.GERMAN);
-		decimalformat.setDecimalFormatSymbols(otherSymbols);
-		
-		instance = new ContextWrapper(base);
-		pref = instance.getSharedPreferences("com.foa.driver", Context.MODE_PRIVATE);
-	}
-	public static void write(String key, String value)
-	{
-		SharedPreferences.Editor editor = pref.edit();
-		editor.putString(key, value);
-		editor.apply();
+
+	public static String getTimeFormUTC(String dateInString){
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm.sss'Z'", Locale.ENGLISH);
+		formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+
+		Date date = null;
+		try {
+			date = formatter.parse(dateInString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return dateTimeformat2.format(date);
 	}
 
-	public static void remove(String key)
-	{
-		SharedPreferences.Editor editor = pref.edit();
-		editor.remove(key);
-		editor.apply();
-	}
-	
-	public static String read(String key)
-	{
-		return com.foa.driver.util.Helper.read(key, null);
-	}
-	
-	public static String read(String key, String defValue)
-	{
-		return pref.getString(key, defValue);
-	}
-	
-	public static void clearAll()
-	{
-		SharedPreferences.Editor editor = pref.edit();
-		editor.clear();
-		editor.apply();
-	}
+
 
 	public static String formatMoney(long monney){
 		Locale localeVN = new Locale("vi", "VN");
@@ -78,16 +56,6 @@ public final class Helper
 	public static String formatDistance(float distance){
 		DecimalFormat df = new DecimalFormat("#.00");
 		 return df.format(distance) + " Km";
-	}
-
-	static public void setLoginData(LoginData loginData){
-		com.foa.driver.util.Helper.write(Constants.DRIVER_ID,loginData.getDriver().getId());
-		com.foa.driver.util.Helper.write(Constants.BEARER_ACCESS_TOKEN,loginData.getBearerAccessToken());
-	}
-
-	static public void clearLoginData(){
-		com.foa.driver.util.Helper.remove(Constants.DRIVER_ID);
-		com.foa.driver.util.Helper.remove(Constants.BEARER_ACCESS_TOKEN);
 	}
 
 	public static void showFailNotification(Context context, LoadingDialog loading, LinearLayout wrapper, String message){

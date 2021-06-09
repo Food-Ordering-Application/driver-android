@@ -5,22 +5,40 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#fff"
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="72dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    <LinearLayout
+        android:id="@+id/startLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        tools:ignore="MissingConstraints">
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@color/primaryColor"
+            android:textAllCaps="false"
+            android:text="Di chuyển"
+            android:textColor="@color/white"
+            tools:ignore="MissingConstraints"
+            android:layout_marginBottom="5dp"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bgContent"
         android:orientation="vertical"
-        android:paddingBottom="6dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="20dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/startLayout">
 
         <!-- addresses part -->
         <LinearLayout
@@ -34,25 +52,34 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_weight="1">
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="40dp">
                     <TextView
-                        android:id="@+id/content_from_badge"
+                        android:id="@+id/restaurantNameTitle"
                         style="@style/ContentMainBadgeTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
                         android:layout_marginEnd="10dp"
                         android:text="@string/from_badge" />
                     <TextView
                         android:id="@+id/restaurantName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/restaurantNameTitle"
                         android:text="Bún đậu ABC"
+                        android:layout_alignParentBottom="true"
                         android:textColor="@color/mainTextColor"
                         android:textSize="14sp" />
-
-                </LinearLayout>
+                    <ImageButton
+                        android:id="@+id/qRCodeButton"
+                        android:src="@drawable/ic_qr_code_scanner"
+                        android:background="@android:color/transparent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"/>
+                </RelativeLayout>
                 <TextView
                     android:id="@+id/restaurantAddress"
                     android:layout_width="wrap_content"

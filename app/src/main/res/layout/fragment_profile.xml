@@ -230,10 +230,13 @@
                     android:fontFamily="@font/proximanovaregular"
                     android:textStyle="bold" />
             <RadioGroup
+                android:id="@+id/activeRadioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:checkedButton="@id/offlineRadioButton">
                 <RadioButton
+                    android:id="@+id/onlineRadioButton"
                     android:layout_weight="1"
                     android:background="@drawable/radio_button_selector"
                     android:layout_width="0dp"
@@ -244,6 +247,7 @@
                     android:textColor="@drawable/radio_button_selector_text"
                     android:layout_height="match_parent"/>
                 <RadioButton
+                    android:id="@+id/offlineRadioButton"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:button="@android:color/transparent"
@@ -501,6 +505,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/signOut"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -524,6 +529,7 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:clickable="true"
                             android:layout_marginLeft="10dp"
                             android:orientation="vertical">
 

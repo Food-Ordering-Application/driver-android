@@ -100,8 +100,8 @@ public class NewDeliveryDialog extends Dialog {
 
         customerAddress.setText(order.getDelivery().getCustomerAddress());
         restaurantAddress.setText(order.getDelivery().getRestaurantAddress());
-        customerName.setText(order.getDelivery().getCustomerId());
-        restaurantName.setText(order.getRestaurantId());
+        customerName.setText(order.getDelivery().getCustomerName());
+        restaurantName.setText(order.getDelivery().getRestaurantName());
         deliveryDistance.setText(Helper.formatDistance(order.getDelivery().getDistance()));
         shippingFee.setText(Helper.formatMoney(order.getDelivery().getShippingFee()));
         grandTotal.setText(Helper.formatMoney(order.getGrandTotal()));

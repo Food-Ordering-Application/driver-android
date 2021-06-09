@@ -16,6 +16,7 @@ import com.foa.driver.model.enums.TransactionType;
 import com.foa.driver.util.Helper;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -55,11 +56,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         }
 
         holder.transactionAmount.setText(Helper.formatMoney(transaction.getAmount()));
-        try {
-            holder.transactionTime.setText(Helper.dateTimeformat2.format(Helper.dateUTCFormat.parse(transaction.getCreatedAt())));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
+        holder.transactionTime.setText("10:00 - 06/06/2021");
+
 
         holder.itemView.setTag(transaction);
     }

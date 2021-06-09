@@ -1,5 +1,8 @@
 package com.foa.driver.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,60 +10,69 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
+import com.foa.driver.LoginActivity;
+import com.foa.driver.MainActivity;
 import com.foa.driver.R;
+import com.foa.driver.api.UserService;
+import com.foa.driver.network.IResultCallback;
+import com.foa.driver.session.LoginSession;
+import com.foa.driver.session.OrderSession;
+import com.foa.driver.util.Debouncer;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.concurrent.TimeUnit;
+
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private View view;
+    private RadioGroup activeRadioGroup;
+    private LinearLayout signOut;
+    private Debouncer debouncer = new Debouncer();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        view =  inflater.inflate(R.layout.fragment_profile, container, false);
+        init();
+        return view;
+    }
+
+    private void init(){
+        activeRadioGroup = view.findViewById(R.id.activeRadioGroup);
+        activeRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
+            debouncer.debounce(ProfileFragment.class, () ->
+                    UserService.updateIsActive(LoginSession.getInstance().getDriver().getId(),
+                            radioGroup.getCheckedRadioButtonId() == R.id.onlineRadioButton, success -> {
+
+                            })
+                    , 3000, TimeUnit.MILLISECONDS);
+        });
+
+        signOut = view.findViewById(R.id.signOut);
+        signOut.setOnClickListener(view -> {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Đăng xuất")
+                    .setMessage("Bạn có muốn đăng xuất khỏi ứng dụng")
+                    .setPositiveButton("Có", (dialog, i) -> {
+                        logout();
+                    })
+                    .setNegativeButton("Không", (dialog, i) -> {
+                        dialog.dismiss();
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        });
+    }
+
+    private void logout(){
+        UserService.updateIsActive(LoginSession.getInstance().getDriver().getId(), false, success -> {
+            OrderSession.clearInstance();
+            LoginSession.clearInstance();
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+        });
+
     }
 }

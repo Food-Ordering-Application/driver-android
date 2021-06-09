@@ -12,7 +12,12 @@ import android.widget.TextView;
 
 import com.foa.driver.api.OrderService;
 import com.foa.driver.dialog.NewDeliveryDialog;
+import com.foa.driver.dialog.QRDialog;
+import com.foa.driver.model.Order;
+import com.foa.driver.model.enums.OrderStatusQuery;
+import com.foa.driver.network.IDataResultCallback;
 import com.foa.driver.session.DriverModeSession;
+import com.foa.driver.session.LoginSession;
 import com.foa.driver.session.OrderSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
@@ -31,6 +36,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -87,6 +94,15 @@ public class MainActivity extends AppCompatActivity  {
                     });
                 }
             });
+        });
+
+        OrderService.getAllOrder(LoginSession.getInstance().getDriver().getId(), OrderStatusQuery.ACTIVE.name(), null, null, new IDataResultCallback<List<Order>>() {
+            @Override
+            public void onSuccess(boolean success, List<Order> data) {
+                if (success&& data.size()>0){
+                    OrderSession.setInstance(data.get(0));
+                }
+            }
         });
     }
 

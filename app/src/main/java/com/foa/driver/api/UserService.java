@@ -11,6 +11,7 @@ import com.foa.driver.network.IResultCallback;
 import com.foa.driver.network.RetrofitClient;
 import com.foa.driver.network.body.ApproveDepositBody;
 import com.foa.driver.network.body.CreateDepositBody;
+import com.foa.driver.network.body.UpdateActiveBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
 import com.foa.driver.network.response.ApproveDepositData;
@@ -160,6 +161,33 @@ public class UserService {
             @Override
             public void onFailure(Call<ResponseAdapter<TransactionListData>> call, Throwable t) {
                 resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
+    public static void updateIsActive(String driverId,boolean isActive, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .updateIsActive(driverId,new UpdateActiveBody(isActive));
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
             }
         });
     }

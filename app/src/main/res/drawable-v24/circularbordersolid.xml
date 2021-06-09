@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="#ffffff" />
-            <corners android:radius="20dp" />
-        </shape>
-    </item>
+    <item  android:state_focused="false"
+        android:drawable="@drawable/nomal_background"/>
+    <item  android:state_focused="true"
+        android:drawable="@drawable/clicked_background"/>
 </selector>

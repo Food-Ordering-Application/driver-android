@@ -1,121 +1,116 @@
 package com.foa.driver.fragment;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 
-import com.foa.driver.MainActivity;
 import com.foa.driver.R;
 import com.foa.driver.api.OrderService;
+import com.foa.driver.dialog.QRDialog;
 import com.foa.driver.model.Order;
 import com.foa.driver.model.enums.DeliveryStatus;
 import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.OrderSession;
 import com.foa.driver.util.Helper;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineCallback;
-import com.mapbox.android.core.location.LocationEngineProvider;
-import com.mapbox.android.core.location.LocationEngineRequest;
-import com.mapbox.android.core.location.LocationEngineResult;
+import com.google.zxing.qrcode.encoder.QRCode;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.api.directions.v5.DirectionsCriteria;
-import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.directions.v5.models.RouteLeg;
+import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
-import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
-import com.mapbox.mapboxsdk.style.layers.LineLayer;
-import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
+import androidmads.library.qrgenearator.QRGEncoder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.os.Looper.getMainLooper;
-import static com.mapbox.core.constants.Constants.PRECISION_6;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
+
+// classes needed to initialize map
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+
+// classes needed to add the location component
+
+// classes needed to add a marker
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+
+// classes to calculate a route
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+
+// classes needed to launch navigation UI
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
 
 public class MapFragment extends Fragment implements PermissionsListener{
 
     private View root;
     private BottomSheetBehavior bottomSheetBehavior;
-    private static final String ROUTE_LAYER_ID = "route-layer-id";
-    private static final String ROUTE_SOURCE_ID = "route-source-id";
-    private DirectionsRoute drivingRoute;
-    private PermissionsManager permissionsManager;
     private MapView mapView;
-    private MapboxMap mapBoxMap;
+    private MapboxMap mapboxMap;
+    private PermissionsManager permissionsManager;
     private LocationComponent locationComponent;
-    private Point origin;
-    private Point destination;
-    private MainActivityLocationCallback callback;
+    private DirectionsRoute currentRoute;
+    private static final String TAG = "DirectionsActivity";
+    private NavigationMapRoute navigationMapRoute;
+    private Button button;
     private Order currentOrder;
     private ConstraintLayout bottomSheetLayout;
-    private static final String RESTAURANT_IMAGE_ID = "restaurantIcon";
-    private static final String CUSTOMER_IMAGE_ID = "customerIcon";
-    private final List<Lifecycle.State> states = new ArrayList<>();
-    private TextView unitsText;
-    private boolean isImperial = true;
-    private Point restaurantPoint;
-    private Point customerPoint;
-    private  SymbolOptions symbolOptions;
-    private  SymbolOptions symbolOptions2;
-    private  SymbolManager symbolManager;
-    private GeoJsonSource routeLineSource;
 
+    private static final String RESTAURANT_ICON_ID = "restaurant-icon-id";
+    private static final String RESTAURANT_SYMBOL_ID = "restaurant-symbol-layer-id";
+    private static final String RESTAURANT_SOURCE_ID = "restaurant-source-id";
 
-
-    public MapFragment() {
-    }
+    private static final String CUSTOMER_ICON_ID = "customer-icon-id";
+    private static final String CUSTOMER_SYMBOL_ID = "customer-symbol-layer-id";
+    private static final String CUSTOMER_SOURCE_ID= "customer-source-id";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -123,92 +118,112 @@ public class MapFragment extends Fragment implements PermissionsListener{
 
         bottomSheetLayout = root.findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-        callback = new MainActivityLocationCallback((MainActivity) getActivity());
+        hiddenDeliveryInfo();
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+        Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
+        mapView.onCreate(savedInstanceState);
+
+        bottomSheetBehavior.setPeekHeight(350);
 
         resetMap();
 
         return root;
     }
 
-    private void addMarker(Style style,LatLng restaurant, LatLng customer){
-        Drawable drawableRestaurant = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_maker_restaurant, null);
-        Bitmap bitmapRestaurant = BitmapUtils.getBitmapFromDrawable(drawableRestaurant);
-        style.addImage(RESTAURANT_IMAGE_ID,bitmapRestaurant);
 
-        Drawable drawableCustomer = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_maker_person, null);
-        Bitmap bitmapCustomer = BitmapUtils.getBitmapFromDrawable(drawableCustomer);
-        style.addImage(CUSTOMER_IMAGE_ID,bitmapCustomer );
+//    @Override
+//    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+//        this.mapboxMap = mapboxMap;
+//        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
+//            @Override
+//            public void onStyleLoaded(@NonNull Style style) {
+//
+//            }
+//        });
+//    }
 
-        symbolManager = new SymbolManager(mapView, mapBoxMap, style);
-        symbolManager.setIconAllowOverlap(true);
-        symbolManager.setTextAllowOverlap(true);
-        symbolOptions = new SymbolOptions()
-                .withLatLng(restaurant)
-                .withIconImage(RESTAURANT_IMAGE_ID)
-                .withIconSize(1f);
-        symbolOptions2 = new SymbolOptions()
-                .withLatLng(customer)
-                .withIconImage(CUSTOMER_IMAGE_ID)
-                .withIconSize(1f);
-        symbolManager.create(symbolOptions);
-        symbolManager.create(symbolOptions2);
-    }
+    private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
+        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(ResourcesCompat.getDrawable(getResources(),
+                R.drawable.ic_maker_restaurant, null));
+        loadedMapStyle.addImage(RESTAURANT_ICON_ID,mBitmap);
+        GeoJsonSource geoJsonSource = new GeoJsonSource(RESTAURANT_SOURCE_ID);
+        loadedMapStyle.addSource(geoJsonSource);
+        SymbolLayer destinationSymbolLayer = new SymbolLayer(RESTAURANT_SYMBOL_ID, RESTAURANT_SOURCE_ID);
+        destinationSymbolLayer.withProperties(
+                iconImage(RESTAURANT_ICON_ID),
+                iconAllowOverlap(true),
+                iconIgnorePlacement(true)
+        );
+        loadedMapStyle.addLayer(destinationSymbolLayer);
 
-    private void clearMakers(){
-        symbolManager.deleteAll();
-        routeLineSource.setGeoJson("");
+        Bitmap mBitmap2 = BitmapUtils.getBitmapFromDrawable(ResourcesCompat.getDrawable(getResources(),
+                R.drawable.ic_maker_person, null));
+        loadedMapStyle.addImage(CUSTOMER_ICON_ID,mBitmap2);
+        GeoJsonSource geoJsonSource2 = new GeoJsonSource(CUSTOMER_SOURCE_ID);
+        loadedMapStyle.addSource(geoJsonSource2);
+        SymbolLayer destinationSymbolLayer2 = new SymbolLayer(CUSTOMER_SYMBOL_ID, CUSTOMER_SOURCE_ID);
+        destinationSymbolLayer2.withProperties(
+                iconImage(CUSTOMER_ICON_ID),
+                iconAllowOverlap(true),
+                iconIgnorePlacement(true)
+        );
+        loadedMapStyle.addLayer(destinationSymbolLayer2);
     }
 
     private void resetMap() {
-        mapView.getMapAsync(mapBoxMap -> mapBoxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-            this.mapBoxMap = mapBoxMap;
-
-            initSource(style);
-
-            initLayers(style);
+        mapView.getMapAsync(mapBoxMap -> mapBoxMap.setStyle(getString(R.string.navigation_guidance_day), style -> {
+            this.mapboxMap = mapBoxMap;
 
             enableLocationComponent(style);
 
-            origin = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                    locationComponent.getLastKnownLocation().getLatitude());
-            Location currentLocation = locationComponent.getLastKnownLocation();
-            cameraPositionUpdate(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),12);
+            addDestinationIconSymbolLayer(style);
 
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            button = root.findViewById(R.id.startButton);
+            button.setOnClickListener(v -> {
+                boolean simulateRoute = true;
+                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                        .directionsRoute(currentRoute)
+                        .shouldSimulateRoute(simulateRoute)
+                        .build();
+                NavigationLauncher.startNavigation(getActivity(), options);
+            });
+
             currentOrder = OrderSession.getInstance();
 
             if (currentOrder != null) {
                 List<Float> restaurantLngLat = currentOrder.getDelivery().getRestaurantGeom().getCoordinates();
                 List<Float> customerLngLat = currentOrder.getDelivery().getCustomerGeom().getCoordinates();
-                LatLng restaurantLatLng = new LatLng(restaurantLngLat.get(1), restaurantLngLat.get(0));
-                LatLng customerLatLng = new LatLng(customerLngLat.get(1), customerLngLat.get(0));
-                restaurantPoint  = Point.fromLngLat(restaurantLngLat.get(0), restaurantLngLat.get(1));
-                customerPoint = Point.fromLngLat(customerLngLat.get(0), customerLngLat.get(1));
+                Point restaurantPoint  = Point.fromLngLat(restaurantLngLat.get(0), restaurantLngLat.get(1));
+                Point customerPoint = Point.fromLngLat(customerLngLat.get(0), customerLngLat.get(1));
                 initOrderBottomSheet(currentOrder);
                 switch (DriverModeSession.getInstance()) {
                     case ON_GOING:
-                        addMarker(style,restaurantLatLng,customerLatLng);
-                        getSingleRoute(origin,restaurantPoint);
+                        visibleDeliveryInfo();
+                        addMarkerAndGetRoute(RESTAURANT_SOURCE_ID,restaurantPoint);
                         break;
                     case PICKED_UP:
-                        addMarker(style,restaurantLatLng,customerLatLng);
-                        getSingleRoute(origin,customerPoint);
+                        visibleDeliveryInfo();
+                        addMarkerAndGetRoute(CUSTOMER_SOURCE_ID,customerPoint);
                         break;
                     case COMPLETED:
                     case CANCELLED:
                     default:
                         hiddenDeliveryInfo();
                         OrderSession.clearInstance();
-                        clearMakers();
                         break;
                 }
             }else{
-                hiddenDeliveryInfo();
+                CameraPosition position = new CameraPosition.Builder()
+                        .zoom(15)
+                        .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(),
+                                locationComponent.getLastKnownLocation().getLongitude()))
+                        .tilt(30)
+                        .build();
+                mapBoxMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(position), 1000);
             }
-
-            initLocationEngine();
         }));
 
     }
@@ -219,6 +234,16 @@ public class MapFragment extends Fragment implements PermissionsListener{
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
+    private void visibleDeliveryInfo(){
+        int dp1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
+                getActivity().getResources().getDisplayMetrics());
+        FrameLayout.LayoutParams layoutParams =  new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(0,0,0,dp1*70);
+        root.setLayoutParams(layoutParams);
+        bottomSheetBehavior.setHideable(false);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
     private void initOrderBottomSheet(Order order) {
         TextView customerAddress = bottomSheetLayout.findViewById(R.id.customerAddress);
         TextView customerName = bottomSheetLayout.findViewById(R.id.customerName);
@@ -227,6 +252,7 @@ public class MapFragment extends Fragment implements PermissionsListener{
         TextView grandTotal = bottomSheetLayout.findViewById(R.id.grandTotal);
         TextView deliveryStatus = bottomSheetLayout.findViewById(R.id.deliveryStatus);
         Button btnChangeDeliveryStatus = bottomSheetLayout.findViewById(R.id.btnChangeDeliveryStatus);
+        ImageButton qRCodeButton = bottomSheetLayout.findViewById(R.id.qRCodeButton);
         LinearLayout progressLoading = bottomSheetLayout.findViewById(R.id.progressLoading);
 
         customerAddress.setText(order.getDelivery().getCustomerAddress());
@@ -244,8 +270,6 @@ public class MapFragment extends Fragment implements PermissionsListener{
                             DriverModeSession.setInstance(DeliveryStatus.PICKED_UP);
                             deliveryStatus.setText("ĐANG GIAO MÓN");
                             btnChangeDeliveryStatus.setText("GIAO MÓN");
-                            List<Float> restaurantLatLng = currentOrder.getDelivery().getCustomerGeom().getCoordinates();
-                            destination = Point.fromLngLat(restaurantLatLng.get(0), restaurantLatLng.get(1));
                             resetMap();
                         } else {
                             Toast.makeText(getActivity(), "Lỗi! Vui lòng thực hiện lại", Toast.LENGTH_SHORT).show();
@@ -269,113 +293,89 @@ public class MapFragment extends Fragment implements PermissionsListener{
                     break;
                 case COMPLETED:
                     DriverModeSession.clearInstance();
-                    hiddenDeliveryInfo();
                     OrderSession.clearInstance();
-                    clearMakers();
+                    hiddenDeliveryInfo();
                     break;
             }
 
         });
-    }
 
-    private void cameraPositionUpdate(LatLng location, int zoom) {
-        CameraPosition position = new CameraPosition.Builder()
-                .zoom(zoom)
-                .target(location)
-                .tilt(30)
-                .build();
-        mapBoxMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(position), 1000);
-    }
-
-    private void initLocationEngine() {
-        LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(getActivity());
-
-        long DEFAULT_INTERVAL_IN_MILLISECONDS = 5000L;
-        long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 2;
-        LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
-                .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
-                .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
-
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            getActivity().finish();
-            return;
-        }
-        locationEngine.requestLocationUpdates(request, callback, getMainLooper());
-        locationEngine.getLastLocation(callback);
-    }
-
-    @SuppressWarnings({"MissingPermission"})
-    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-
-        if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
-
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
+        qRCodeButton.setOnClickListener(view -> {
+            if (OrderSession.getInstance()!=null){
+                QRDialog dialog = new QRDialog(getActivity(),OrderSession.getInstance().getId());
+                dialog.show();
             }
+        });
+    }
 
-            LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(getActivity())
-                    .pulseEnabled(true)
-                    .build();
+    private void getRoute(Point origin, Point destination) {
+        NavigationRoute.builder(getActivity())
+                .accessToken(Mapbox.getAccessToken())
+                .origin(origin)
+                .destination(destination)
+                .build()
+                .getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        // You can get the generic HTTP info about the response
+                        Log.d(TAG, "Response code: " + response.code());
+                        if (response.body() == null) {
+                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                            return;
+                        } else if (response.body().routes().size() < 1) {
+                            Log.e(TAG, "No routes found");
+                            return;
+                        }
 
-            locationComponent = mapBoxMap.getLocationComponent();
-            locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(getActivity(), loadedMapStyle)
-                            .locationComponentOptions(customLocationComponentOptions)
-                            .build());
+                        currentRoute = response.body().routes().get(0);
 
+                        // Draw the route on the map
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                        Log.e(TAG, "Error: " + throwable.getMessage());
+                    }
+                });
+    }
+
+    private void addMarkerAndGetRoute(String sourceId,Point destinationPoint ){
+        Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                locationComponent.getLastKnownLocation().getLatitude());
+
+        GeoJsonSource source = mapboxMap.getStyle().getSourceAs(sourceId);
+        if (source != null) {
+            source.setGeoJson(Feature.fromGeometry(destinationPoint));
+        }
+        getRoute(originPoint, destinationPoint);
+
+        LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                .include(new LatLng(destinationPoint.latitude(),destinationPoint.longitude())) // Northeast
+                .include(new LatLng(originPoint.latitude(),originPoint.longitude())) // Southwest
+                .build();
+
+        mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100), 1000);
+
+        button.setEnabled(true);
+        button.setBackgroundResource(R.color.mapbox_blue);
+    }
+
+    @SuppressWarnings( {"MissingPermission"})
+    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
+        if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
+            locationComponent = mapboxMap.getLocationComponent();
+            locationComponent.activateLocationComponent(getActivity(), loadedMapStyle);
             locationComponent.setLocationComponentEnabled(true);
-            locationComponent.setCameraMode(CameraMode.TRACKING_GPS);
-            locationComponent.setRenderMode(RenderMode.GPS);
+            locationComponent.setCameraMode(CameraMode.TRACKING);
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
-        }
-    }
-
-
-    private class MainActivityLocationCallback
-            implements LocationEngineCallback<LocationEngineResult> {
-
-        private final WeakReference<MainActivity> activityWeakReference;
-
-        MainActivityLocationCallback(MainActivity activity) {
-            this.activityWeakReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onSuccess(LocationEngineResult result) {
-            MainActivity activity = activityWeakReference.get();
-
-            if (activity != null) {
-                Location location = result.getLastLocation();
-
-                if (location == null) {
-                    return;
-                }
-                if (OrderSession.getInstance()!=null){
-                    Point origin = Point.fromLngLat(result.getLastLocation().getLongitude(), result.getLastLocation().getLatitude());
-                    switch (DriverModeSession.getInstance()) {
-                        case ON_GOING:
-                            cameraPositionUpdate(new LatLng(result.getLastLocation().getLatitude(), result.getLastLocation().getLongitude()),18);
-                            getSingleRoute(origin,restaurantPoint);
-                            break;
-                        case PICKED_UP:
-                            cameraPositionUpdate(new LatLng(result.getLastLocation().getLatitude(), result.getLastLocation().getLongitude()),18);
-                            getSingleRoute(origin,customerPoint);
-                            break;
-                    }
-                }
-
-                if (mapBoxMap != null && result.getLastLocation() != null) {
-                    mapBoxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(@NonNull Exception exception) {
-
         }
     }
 
@@ -386,86 +386,24 @@ public class MapFragment extends Fragment implements PermissionsListener{
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
+        Toast.makeText(getActivity(), R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPermissionResult(boolean granted) {
         if (granted) {
-            mapBoxMap.getStyle(this::enableLocationComponent);
+            enableLocationComponent(mapboxMap.getStyle());
         } else {
+            Toast.makeText(getActivity(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
             getActivity().finish();
         }
     }
 
 
-    private void initSource(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
-//        GeoJsonSource iconGeoJsonSource = new GeoJsonSource(ICON_SOURCE_ID,
-//                Feature.fromGeometry(Point.fromLngLat(destination.longitude(),
-//                        destination.latitude())));
-//        loadedMapStyle.addSource(iconGeoJsonSource);
-    }
-
-    private void showRouteLine() {
-        if (mapBoxMap != null) {
-            mapBoxMap.getStyle(style -> {
-                routeLineSource = style.getSourceAs(ROUTE_SOURCE_ID);
-                if (routeLineSource != null) {
-                    routeLineSource.setGeoJson(LineString.fromPolyline(drivingRoute.geometry(),
-                            PRECISION_6));
-                }
-            });
-        }
-    }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private void initLayers(@NonNull Style loadedMapStyle) {
-        LineLayer routeLayer = new LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID);
-
-        routeLayer.setProperties(
-                lineCap(Property.LINE_CAP_ROUND),
-                lineJoin(Property.LINE_JOIN_ROUND),
-                lineWidth(5f),
-                lineColor(Color.parseColor("#006eff"))
-        );
-        loadedMapStyle.addLayer(routeLayer);
-
-//        loadedMapStyle.addImage(RED_PIN_ICON_ID, BitmapUtils.getBitmapFromDrawable(
-//                getResources().getDrawable(R.drawable.ic_marker_customer)));
-//
-//        loadedMapStyle.addLayer(new SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).withProperties(
-//                iconImage(RED_PIN_ICON_ID),
-//                iconIgnorePlacement(true),
-//                iconAllowOverlap(true),
-//                iconOffset(new Float[]{0f, -9f})));
-    }
-
-    private void getSingleRoute(Point origin, Point destination) {
-        MapboxDirections client = MapboxDirections.builder()
-                .origin(origin)
-                .destination(destination)
-                .overview(DirectionsCriteria.OVERVIEW_FULL)
-                .profile(DirectionsCriteria.PROFILE_DRIVING)
-                .accessToken(getString(R.string.mapbox_access_token))
-                .build();
-
-
-        client.enqueueCall(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(@NotNull Call<DirectionsResponse> call, @NotNull Response<DirectionsResponse> response) {
-                if (response.body() == null) {
-                    return;
-                } else if (response.body().routes().size() < 1) {
-                    return;
-                }
-                drivingRoute = response.body().routes().get(0);
-                showRouteLine();
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<DirectionsResponse> call, @NotNull Throwable throwable) {
-            }
-        });
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
     }
 
     @Override
@@ -475,9 +413,9 @@ public class MapFragment extends Fragment implements PermissionsListener{
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mapView.onStart();
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
     }
 
     @Override
@@ -487,27 +425,20 @@ public class MapFragment extends Fragment implements PermissionsListener{
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mapView.onDestroy();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NotNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
     }
 }
