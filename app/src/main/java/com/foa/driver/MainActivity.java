@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity  {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
+        navController.navigate(R.id.navigation_map);
         if(ActivityCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
 
@@ -96,12 +97,11 @@ public class MainActivity extends AppCompatActivity  {
             });
         });
 
-        OrderService.getAllOrder(LoginSession.getInstance().getDriver().getId(), OrderStatusQuery.ACTIVE.name(), null, null, new IDataResultCallback<List<Order>>() {
-            @Override
-            public void onSuccess(boolean success, List<Order> data) {
-                if (success&& data.size()>0){
-                    OrderSession.setInstance(data.get(0));
-                }
+        OrderService.getAllOrder(LoginSession.getInstance().getDriver().getId(), OrderStatusQuery.ACTIVE.name(), 1, 25,null,null, (success, data) -> {
+            if (success&& data.size()>0){
+                OrderSession.setInstance(data.get(0));
+                DriverModeSession.setInstance(data.get(0).getDelivery().getStatus());
+                navController.navigate(R.id.navigation_map);
             }
         });
     }

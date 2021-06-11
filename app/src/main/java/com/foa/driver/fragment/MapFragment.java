@@ -133,18 +133,6 @@ public class MapFragment extends Fragment implements PermissionsListener {
         return root;
     }
 
-
-//    @Override
-//    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-//        this.mapboxMap = mapboxMap;
-//        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
-//            @Override
-//            public void onStyleLoaded(@NonNull Style style) {
-//
-//            }
-//        });
-//    }
-
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
         Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.ic_maker_restaurant, null));

@@ -7,6 +7,7 @@
     android:orientation="horizontal">
 
     <!-- LEFT TITLE PART -->
+    <!-- RIGHT TITLE PART -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="155dp"
@@ -14,43 +15,30 @@
         android:background="@color/bgTitleLeft"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:paddingLeft="10dp"
+        android:paddingTop="20dp"
         android:paddingRight="10dp"
-        android:paddingTop="20dp">
+        android:paddingBottom="20dp">
 
         <TextView
-            android:id="@+id/title_price"
+            android:id="@+id/shippingFeeTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/title_time_label"
+            android:id="@+id/deliveryDateTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/title_date_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/title_time_label"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
-
-
     </RelativeLayout>
-    <!-- RIGHT TITLE PART -->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -74,7 +62,7 @@
             android:src="@drawable/from_to_purple" />
 
         <TextView
-            android:id="@+id/title_from_address"
+            android:id="@+id/restaurantAddressTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/title_from_to_dots"
@@ -91,7 +79,7 @@
             android:id="@+id/title_from_to_dots_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/title_from_address"
+            android:layout_below="@id/restaurantAddressTextView2"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/title_from_to_dots"
@@ -99,7 +87,7 @@
             android:src="@color/contentDividerLine" />
 
         <TextView
-            android:id="@+id/title_to_address"
+            android:id="@+id/customerAddressTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/title_from_to_dots_divider"
@@ -113,7 +101,7 @@
 
 
         <TextView
-            android:id="@+id/title_requests_count"
+            android:id="@+id/deliveryDistanceTextView2"
             style="@style/TitleBadgeText"
             android:text="0"
             android:layout_width="wrap_content"
@@ -122,24 +110,16 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
         <TextView
-            style="@style/TitleBadgeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" Km"
-            android:layout_toEndOf="@+id/title_requests_count"
-            android:layout_alignParentBottom="true" />
-
-        <TextView
             style="@style/TitleBadgeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/title_requests_count"
-            android:layout_alignLeft="@id/title_requests_count"
-            android:layout_alignStart="@id/title_requests_count"
+            android:layout_above="@id/deliveryDistanceTextView2"
+            android:layout_alignLeft="@id/deliveryDistanceTextView2"
+            android:layout_alignStart="@id/deliveryDistanceTextView2"
             android:text="Khoảng cách" />
 
         <TextView
-            android:id="@+id/title_weight"
+            android:id="@+id/grandTotalTextView2"
             style="@style/TitleBadgeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,10 +133,9 @@
             android:layout_width="wrap_content"
             android:gravity="end"
             android:layout_height="wrap_content"
-            android:layout_above="@id/title_weight"
+            android:layout_above="@id/grandTotalTextView2"
             android:layout_alignParentEnd="true"
-            android:layout_alignStart="@id/title_weight"
-            android:text="Phí giao hàng" />
+            android:text="Giá trị đơn hàng" />
 
     </RelativeLayout>
 </LinearLayout>

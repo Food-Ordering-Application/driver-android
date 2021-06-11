@@ -16,19 +16,12 @@
         android:paddingTop="7dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/order_id_mock"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
-
-        <TextView
+            android:id="@+id/deliveryDistanceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="@string/price_mock"
+            android:text="8 Km"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -72,25 +65,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/content_name_view"
-                    style="@style/ContentMainBadgeTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:text="Trà sữa trân châu"
-                    android:textColor="@color/mainTextColor"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ContentMainBadgeTitle"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:text="Trà sữa trân châu"
-                    android:textColor="@color/mainTextColor" />
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -108,12 +85,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/content_from_badge"
@@ -125,7 +101,7 @@
                     android:text="@string/from_badge" />
 
                 <TextView
-                    android:id="@+id/restaurantAddress"
+                    android:id="@+id/restaurantAddressTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@id/content_from_badge"
@@ -135,24 +111,11 @@
                     android:textColor="@color/mainTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/restaurantName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/restaurantAddress"
-                    android:layout_alignStart="@id/restaurantAddress"
-                    android:layout_below="@id/restaurantAddress"
-                    android:text="@string/content_from2_mock"
-                    android:textColor="@color/mainTextColor"
-                    android:textSize="14sp" />
-
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/content_to_badge"
@@ -164,7 +127,7 @@
                     android:text="@string/to_badge" />
 
                 <TextView
-                    android:id="@+id/customerAddress"
+                    android:id="@+id/customerAddressTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@id/content_to_badge"
@@ -174,17 +137,6 @@
                     android:textColor="@color/mainTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/customerName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/customerAddress"
-                    android:layout_alignStart="@id/customerAddress"
-                    android:layout_below="@id/customerAddress"
-                    android:text="@string/content_to2_mock"
-                    android:textColor="@color/mainTextColor"
-                    android:textSize="14sp" />
 
             </RelativeLayout>
 
@@ -220,24 +172,12 @@
                     android:text="Giao hàng lúc" />
 
                 <TextView
-                    android:id="@+id/estimateTimeDelivery"
+                    android:id="@+id/deliveryDateTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/content_delivery_date_badge"
                     android:layout_alignStart="@id/content_delivery_date_badge"
                     android:layout_alignLeft="@id/content_delivery_date_badge"
-                    android:text="@string/delivery_time_mock"
-                    android:textColor="@color/mainTextColor"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/content_delivery_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/estimateTimeDelivery"
-                    android:layout_alignStart="@id/estimateTimeDelivery"
-                    android:layout_alignLeft="@id/estimateTimeDelivery"
                     android:text="@string/delivery_date_mock"
                     android:textColor="@color/mainTextColor"
                     android:textSize="14sp" />
@@ -259,7 +199,7 @@
                     android:text="Tổng tiền" />
 
                 <TextView
-                    android:id="@+id/grandTotal"
+                    android:id="@+id/grandTotalTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/content_deadline_badge"
@@ -269,22 +209,9 @@
                     android:textColor="@color/mainTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/paymentStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/grandTotal"
-                    android:layout_alignStart="@id/grandTotal"
-                    android:layout_alignLeft="@id/grandTotal"
-                    android:text=""
-                    android:textColor="@color/mainTextColor"
-                    android:textSize="14sp" />
             </RelativeLayout>
 
         </LinearLayout>
-
-         divider line
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -304,6 +231,7 @@
                 android:text="Thu nhập" />
 
             <TextView
+                android:id="@+id/shippingFeeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="25.000đ"

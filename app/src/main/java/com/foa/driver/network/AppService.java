@@ -42,6 +42,8 @@ public interface AppService {
     Call<ResponseAdapter<OrderListData>> getAllOrder(
             @Path("driverId") String orderId,
             @Query("query") String status,
+            @Query("page") int page,
+            @Query("size") int size,
             @Query("start") String startDate,
             @Query("end") String endDate
     );

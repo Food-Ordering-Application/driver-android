@@ -1,5 +1,6 @@
 package com.foa.driver.model;
 
+import com.foa.driver.model.enums.DeliveryStatus;
 import com.foa.driver.model.enums.IssueType;
 import com.google.gson.annotations.SerializedName;
 
@@ -31,7 +32,7 @@ public class Delivery {
     @SerializedName("shippingFee")
     private long shippingFee;
     @SerializedName("status")
-    private String status;
+    private DeliveryStatus status;
     @SerializedName("issueNote")
     private String issueNote;
     @SerializedName("issueType")
@@ -151,11 +152,11 @@ public class Delivery {
         this.shippingFee = shippingFee;
     }
 
-    public String getStatus() {
+    public DeliveryStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DeliveryStatus status) {
         this.status = status;
     }
 

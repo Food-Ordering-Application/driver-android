@@ -54,9 +54,9 @@ public class OrderService {
     }
 
 
-    public static void getAllOrder(String driverId, String status,String startDate, String endDate, IDataResultCallback<List<Order>> resultCallback) {
+    public static void getAllOrder(String driverId, String status,int page, int size,String startDate, String endDate, IDataResultCallback<List<Order>> resultCallback) {
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
-                .getAllOrder(driverId, status, startDate,endDate);
+                .getAllOrder(driverId, status, page, size,startDate,endDate);
         responseCall.enqueue(new Callback<ResponseAdapter<OrderListData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<OrderListData>> call, Response<ResponseAdapter<OrderListData>> response) {
