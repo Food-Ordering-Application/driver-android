@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.OrderListFragment">
     <ListView
         android:id="@+id/mainListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="10dp"
-        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingBottom="100dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:scrollbars="none"/>
-</FrameLayout>
+    <com.airbnb.lottie.LottieAnimationView
+        android:visibility="gone"
+        android:id="@+id/driverLoadingView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:lottie_rawRes="@raw/delivery_riding"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"/>
+</RelativeLayout>

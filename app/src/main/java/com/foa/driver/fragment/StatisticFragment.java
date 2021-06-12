@@ -101,7 +101,6 @@ public class StatisticFragment extends Fragment {
                 adapter.setData(list,StatisticType.WEEK);
                 dayOfWeekChart.setData(barData);
                 XAxis xAxis = dayOfWeekChart.getXAxis();
-                barDataSet= new BarDataSet(new ArrayList<>(),"Thu nhập");
                 dayOfWeekChart.setVisibleXRangeMaximum(7);
                 xAxis.setValueFormatter(new DateForFormatter());
                 dayOfWeekChart.setVisibility(View.VISIBLE);

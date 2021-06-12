@@ -23,18 +23,9 @@ import kotlin.Unit;
 
 public class NewDeliveryDialog extends Dialog {
 
-    private Context context;
+    private final Context context;
     private AcceptedListener listener;
-    private SwipeableButton acceptButton;
-    private Order order;
-    private TextView customerAddress;
-    private TextView restaurantAddress;
-    private TextView customerName;
-    private TextView restaurantName;
-    private TextView deliveryDistance;
-    private TextView shippingFee;
-    private TextView grandTotal;
-    private TextView estimateDelivery;
+    private final Order order;
     private TextView countDownAcceptTime;
 
     public NewDeliveryDialog(Context context, Order order) {
@@ -69,7 +60,7 @@ public class NewDeliveryDialog extends Dialog {
     }
 
     private void init(){
-        acceptButton = findViewById(R.id.acceptSwipeButton);
+        SwipeableButton acceptButton = findViewById(R.id.acceptSwipeButton);
         acceptButton.setOnSwipedOnListener(()->{
             AtomicReference<Unit> unit = new AtomicReference<>();
             OrderService.acceptOrder(order.getId(), success -> {
@@ -89,14 +80,15 @@ public class NewDeliveryDialog extends Dialog {
         });
         countDownAcceptTime  = findViewById(R.id.countDownAcceptTime);
 
-         customerAddress = findViewById(R.id.customerAddress);
-         restaurantAddress=findViewById(R.id.restaurantAddress);
-         customerName=findViewById(R.id.customerName);
-         restaurantName=findViewById(R.id.restaurantName);
-         deliveryDistance=findViewById(R.id.deliveryDistance);
-         shippingFee=findViewById(R.id.deliveryShippingFee);
-         grandTotal=findViewById(R.id.grandTotal);
-         estimateDelivery=findViewById(R.id.estimateTimeDelivery);
+        TextView customerAddress = findViewById(R.id.customerAddress);
+        TextView restaurantAddress = findViewById(R.id.restaurantAddress);
+        TextView customerName = findViewById(R.id.customerName);
+        TextView restaurantName = findViewById(R.id.restaurantName);
+        TextView deliveryDistance = findViewById(R.id.deliveryDistance);
+        TextView shippingFee = findViewById(R.id.deliveryShippingFee);
+        TextView grandTotal = findViewById(R.id.grandTotal);
+        TextView estimateDayDelivery = findViewById(R.id.estimateDayDelivery);
+        TextView estimateHourDelivery = findViewById(R.id.estimateHourDelivery);
 
         customerAddress.setText(order.getDelivery().getCustomerAddress());
         restaurantAddress.setText(order.getDelivery().getRestaurantAddress());
@@ -105,7 +97,8 @@ public class NewDeliveryDialog extends Dialog {
         deliveryDistance.setText(Helper.formatDistance(order.getDelivery().getDistance()));
         shippingFee.setText(Helper.formatMoney(order.getDelivery().getShippingFee()));
         grandTotal.setText(Helper.formatMoney(order.getGrandTotal()));
-        estimateDelivery.setText("10:00");
+        estimateDayDelivery.setText(Helper.getTimeFormUTC(order.getDelivery().getExpectedDeliveryTime()).getDay());
+        estimateDayDelivery.setText(Helper.getTimeFormUTC(order.getDelivery().getExpectedDeliveryTime()).getHour());
     }
 
     public void setAcceptedListener(AcceptedListener listener){

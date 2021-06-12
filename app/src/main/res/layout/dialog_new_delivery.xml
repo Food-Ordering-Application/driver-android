@@ -181,18 +181,28 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
-                    android:text="Nhận hàng lúc" />
+                    android:text="Dự kiến giao hàng" />
 
                 <TextView
-                    android:id="@+id/estimateTimeDelivery"
+                    android:id="@+id/estimateDayDelivery"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/content_delivery_date_badge"
                     android:layout_alignStart="@id/content_delivery_date_badge"
                     android:layout_alignLeft="@id/content_delivery_date_badge"
+                    android:text="12/06/2021"
+                    android:textColor="@color/mainTextColor"
+                    android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/estimateHourDelivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/estimateDayDelivery"
+                    android:layout_alignStart="@id/content_delivery_date_badge"
+                    android:layout_alignLeft="@id/content_delivery_date_badge"
                     android:text="@string/delivery_time_mock"
                     android:textColor="@color/mainTextColor"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </RelativeLayout>

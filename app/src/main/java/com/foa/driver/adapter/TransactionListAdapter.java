@@ -57,7 +57,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         holder.transactionAmount.setText(Helper.formatMoney(transaction.getAmount()));
 
-        holder.transactionTime.setText("10:00 - 06/06/2021");
+        holder.transactionTime.setText(Helper.getTimeFormUTC(transaction.getCreatedAt()).getFull());
 
 
         holder.itemView.setTag(transaction);

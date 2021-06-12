@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.foa.driver.dialog.LoadingDialog;
@@ -36,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button btnLogin;
     private Button btnSaleOffline;
     LinearLayout wrapperLogin;
-    private LoadingDialog loading;
+    private LottieAnimationView loading;
 
 
 
@@ -51,26 +52,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         wrapperLogin = findViewById(R.id.loginWrapper);
         txtusername = findViewById(R.id.txtUserName);
         txtpassword = findViewById(R.id.txtPassword);
+        loading = findViewById(R.id.driverLoadingView);
 
-        loading = new LoadingDialog(this);
-
-
-
-        if (getIntent().getExtras()!=null){
-            Bundle bundle  = getIntent().getExtras();
-            StringBuilder stringBuilder = new StringBuilder("Extras: \n");
-            for(String key: bundle.keySet()){
-                Object value = bundle.get(key);
-                stringBuilder.append(key+" : "+value+"\n");
-            }
-        Log.e("hello: ",stringBuilder.toString());
-        }
+        login();
     }
 
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
+        login();
+    }
 
+    private void login(){
+        btnLogin.setEnabled(false);
         String phoneNumber = txtusername.getText().toString();
         String password = txtpassword.getText().toString();
         phoneNumber = "0123123123";
@@ -83,8 +77,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             return;
         }
-
-        loading.show();
+        loading.setVisibility(View.VISIBLE);
         Call<ResponseAdapter<LoginData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .login(new LoginBody(phoneNumber, password));
         responseCall.enqueue(new Callback<ResponseAdapter<LoginData>>() {
@@ -132,7 +125,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     default:
                         Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
                 }
-                loading.dismiss();
             }
 
             @Override

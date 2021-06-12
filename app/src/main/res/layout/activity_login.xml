@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:visibility="visible"
+        android:id="@+id/driverLoadingView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:lottie_rawRes="@raw/delivery_riding"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/loginWrapper"/>
     <LinearLayout
         android:id="@+id/loginWrapper"
         android:layout_width="wrap_content"

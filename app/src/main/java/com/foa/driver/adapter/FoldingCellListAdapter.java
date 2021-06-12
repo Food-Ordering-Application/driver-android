@@ -5,10 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.foa.driver.R;
+import com.foa.driver.api.OrderService;
+import com.foa.driver.caching.DetailDeliveryOrderCatching;
 import com.foa.driver.model.Order;
+import com.foa.driver.model.enums.OrderStatusQuery;
+import com.foa.driver.network.IDataResultCallback;
 import com.foa.driver.util.Helper;
 import com.ramotion.foldingcell.FoldingCell;
 
@@ -17,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Simple example of ListAdapter for using with Folding Cell
@@ -29,15 +36,17 @@ public class FoldingCellListAdapter extends BaseAdapter {
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
     private View.OnClickListener defaultRequestBtnClickListener;
     private List<Order> orderList;
+    private OrderStatusQuery type;
 
     public FoldingCellListAdapter(Context context, List<Order> orderList) {
         this.context = context;
         this.orderList = orderList;
     }
 
-    public FoldingCellListAdapter(Context context) {
+    public FoldingCellListAdapter(Context context, OrderStatusQuery type) {
         this.context = context;
         orderList = new ArrayList<>();
+        this.type = type;
     }
 
     public void setOrders(List<Order> orderList){
@@ -76,16 +85,22 @@ public class FoldingCellListAdapter extends BaseAdapter {
             viewHolder.shippingFee = cell.findViewById(R.id.shippingFeeTextView);
             viewHolder.grandTotal = cell.findViewById(R.id.grandTotalTextView);
             viewHolder.deliveredDate = cell.findViewById(R.id.deliveryDateTextView);
+            viewHolder.deliveredHour = cell.findViewById(R.id.deliveryHourTextView);
             viewHolder.fromAddress = cell.findViewById(R.id.restaurantAddressTextView);
             viewHolder.toAddress = cell.findViewById(R.id.customerAddressTextView);
             viewHolder.distance = cell.findViewById(R.id.deliveryDistanceTextView);
+            viewHolder.orderItemCountTextView = cell.findViewById(R.id.orderItemCountTextView);
 
             viewHolder.shippingFee2 = cell.findViewById(R.id.shippingFeeTextView2);
             viewHolder.grandTotal2 = cell.findViewById(R.id.grandTotalTextView2);
             viewHolder.deliveredDate2 = cell.findViewById(R.id.deliveryDateTextView2);
+            viewHolder.deliveredHour2 = cell.findViewById(R.id.deliveryHourTextView2);
             viewHolder.fromAddress2 = cell.findViewById(R.id.restaurantAddressTextView2);
             viewHolder.toAddress2 = cell.findViewById(R.id.customerAddressTextView2);
             viewHolder.distance2 = cell.findViewById(R.id.deliveryDistanceTextView2);
+
+            viewHolder.orderItemsRecyclerView = cell.findViewById(R.id.orderItemsRecyclerView);
+            viewHolder.processLoading = cell.findViewById(R.id.processLoading);
             cell.setTag(viewHolder);
         } else {
             // for existing cell set valid valid state(without animation)
@@ -103,26 +118,49 @@ public class FoldingCellListAdapter extends BaseAdapter {
         // bind data from selected element to view through view holder
         viewHolder.shippingFee.setText(Helper.formatMoney(order.getDelivery().getShippingFee()));
         viewHolder.grandTotal.setText(Helper.formatMoney(order.getGrandTotal()));
-        viewHolder.deliveredDate.setText(order.getDelivery().getDeliveredAt());
+        viewHolder.deliveredDate.setText(Helper.getTimeFormUTC(order.getDelivery().getDeliveredAt()).getDay());
+        viewHolder.deliveredHour.setText(Helper.getTimeFormUTC(order.getDelivery().getDeliveredAt()).getHour());
         viewHolder.fromAddress.setText(order.getDelivery().getCustomerAddress());
         viewHolder.toAddress.setText(order.getDelivery().getRestaurantAddress());
         viewHolder.distance.setText(Helper.formatDistance(order.getDelivery().getDistance()));
+        viewHolder.orderItemCountTextView.setText("("+ order.getOrderItems().size()+")");
 
-        viewHolder.shippingFee2.setText(Helper.formatMoney(order.getDelivery().getShippingFee()));
+        viewHolder.shippingFee2.setText(Helper.formatMoneyCompact(order.getDelivery().getShippingFee()));
         viewHolder.grandTotal2.setText(Helper.formatMoney(order.getGrandTotal()));
-        viewHolder.deliveredDate2.setText(order.getDelivery().getDeliveredAt());
+        viewHolder.deliveredDate2.setText(Helper.getTimeFormUTC(order.getDelivery().getDeliveredAt()).getDay());
+        viewHolder.deliveredHour2.setText(Helper.getTimeFormUTC(order.getDelivery().getDeliveredAt()).getHour());
         viewHolder.fromAddress2.setText(order.getDelivery().getCustomerAddress());
         viewHolder.toAddress2.setText(order.getDelivery().getRestaurantAddress());
         viewHolder.distance2.setText(Helper.formatDistance(order.getDelivery().getDistance()));
+        //viewHolder.processLoading.setVisibility(View.VISIBLE);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        OrderItemListAdapter adapter = new OrderItemListAdapter(context,order.getOrderItems());
+        viewHolder.orderItemsRecyclerView.setLayoutManager(layoutManager);
+        viewHolder.orderItemsRecyclerView.setAdapter(adapter);
 
         return cell;
     }
 
     public void registerToggle(int position) {
-        if (unfoldedIndexes.contains(position))
-            registerFold(position);
-        else
+        Order currentOrder = orderList.get(position);
+        if (unfoldedIndexes.contains(position)){
+            if (type!=OrderStatusQuery.ACTIVE){
+                registerFold(position);
+            }
+        } else{
             registerUnfold(position);
+            if (DetailDeliveryOrderCatching.getOrderCatching(currentOrder)==null){
+                OrderService.getOrderById(currentOrder.getId(), (success, data) -> {
+                    DetailDeliveryOrderCatching.addDeliveryCatching(data);
+                    orderList.get(position).setOrderItems(data.getOrderItems());
+                    notifyDataSetChanged();
+                });
+            }else{
+                orderList.get(position).setOrderItems(currentOrder.getOrderItems());
+                notifyDataSetChanged();
+            }
+        }
     }
 
     public void registerFold(int position) {
@@ -133,12 +171,8 @@ public class FoldingCellListAdapter extends BaseAdapter {
         unfoldedIndexes.add(position);
     }
 
-    public View.OnClickListener getDefaultRequestBtnClickListener() {
-        return defaultRequestBtnClickListener;
-    }
-
-    public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
-        this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
+    public void clearUnfoldedIndexes() {
+        unfoldedIndexes.clear();
     }
 
     // View lookup cache
@@ -148,12 +182,17 @@ public class FoldingCellListAdapter extends BaseAdapter {
         TextView toAddress;
         TextView distance;
         TextView deliveredDate;
+        TextView deliveredHour;
         TextView grandTotal;
         TextView shippingFee2;
         TextView fromAddress2;
         TextView toAddress2;
         TextView distance2;
         TextView deliveredDate2;
+        TextView deliveredHour2;
         TextView grandTotal2;
+        TextView orderItemCountTextView;
+        RecyclerView orderItemsRecyclerView;
+        ProgressBar processLoading;
     }
 }

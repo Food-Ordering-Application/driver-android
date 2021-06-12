@@ -18,24 +18,33 @@
         android:paddingLeft="10dp"
         android:paddingTop="20dp"
         android:paddingRight="10dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="15dp">
 
         <TextView
             android:id="@+id/shippingFeeTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:text="100k"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/deliveryDateTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_above="@id/deliveryHourTextView2"
+            android:textColor="@android:color/white"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/deliveryHourTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="18sp" />
 
     </RelativeLayout>
 

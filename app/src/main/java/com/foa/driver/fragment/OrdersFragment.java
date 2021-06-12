@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.foa.driver.R;
 import com.foa.driver.adapter.ViewPagerAdapter;
+import com.foa.driver.model.enums.OrderStatusQuery;
 import com.google.android.material.tabs.TabLayout;
 
 public class OrdersFragment extends Fragment {
@@ -37,8 +38,8 @@ public class OrdersFragment extends Fragment {
 
     private void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter((getActivity().getSupportFragmentManager()));
-        adapter.addFragment(new OrderListFragment(), "Đang thực hiện");
-        adapter.addFragment(new OrderListFragment(), "Đã hoàn tất");
+        adapter.addFragment(new OrderListFragment(OrderStatusQuery.ACTIVE), "Đang thực hiện");
+        adapter.addFragment(new OrderListFragment(OrderStatusQuery.COMPLETED), "Đã hoàn tất");
 
         viewPager.setAdapter(adapter);
     }

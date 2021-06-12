@@ -111,7 +111,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
 
     private static final String CUSTOMER_ICON_ID = "customer-icon-id";
     private static final String CUSTOMER_SYMBOL_ID = "customer-symbol-layer-id";
-    private static final String CUSTOMER_SOURCE_ID= "customer-source-id";
+    private static final String CUSTOMER_SOURCE_ID = "customer-source-id";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -136,7 +136,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
         Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.ic_maker_restaurant, null));
-        loadedMapStyle.addImage(RESTAURANT_ICON_ID,mBitmap);
+        loadedMapStyle.addImage(RESTAURANT_ICON_ID, mBitmap);
         GeoJsonSource geoJsonSource = new GeoJsonSource(RESTAURANT_SOURCE_ID);
         loadedMapStyle.addSource(geoJsonSource);
         SymbolLayer destinationSymbolLayer = new SymbolLayer(RESTAURANT_SYMBOL_ID, RESTAURANT_SOURCE_ID);
@@ -149,7 +149,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
 
         Bitmap mBitmap2 = BitmapUtils.getBitmapFromDrawable(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.ic_maker_person, null));
-        loadedMapStyle.addImage(CUSTOMER_ICON_ID,mBitmap2);
+        loadedMapStyle.addImage(CUSTOMER_ICON_ID, mBitmap2);
         GeoJsonSource geoJsonSource2 = new GeoJsonSource(CUSTOMER_SOURCE_ID);
         loadedMapStyle.addSource(geoJsonSource2);
         SymbolLayer destinationSymbolLayer2 = new SymbolLayer(CUSTOMER_SYMBOL_ID, CUSTOMER_SOURCE_ID);
@@ -185,16 +185,16 @@ public class MapFragment extends Fragment implements PermissionsListener {
             if (currentOrder != null) {
                 List<Float> restaurantLngLat = currentOrder.getDelivery().getRestaurantGeom().getCoordinates();
                 List<Float> customerLngLat = currentOrder.getDelivery().getCustomerGeom().getCoordinates();
-                Point restaurantPoint  = Point.fromLngLat(restaurantLngLat.get(0), restaurantLngLat.get(1));
+                Point restaurantPoint = Point.fromLngLat(restaurantLngLat.get(0), restaurantLngLat.get(1));
                 Point customerPoint = Point.fromLngLat(customerLngLat.get(0), customerLngLat.get(1));
                 switch (DriverModeSession.getInstance()) {
                     case ON_GOING:
                         visibleDeliveryInfo();
-                        addMarkerAndGetRoute(RESTAURANT_SOURCE_ID,restaurantPoint);
+                        addMarkerAndGetRoute(RESTAURANT_SOURCE_ID, restaurantPoint);
                         break;
                     case PICKED_UP:
                         visibleDeliveryInfo();
-                        addMarkerAndGetRoute(CUSTOMER_SOURCE_ID,customerPoint);
+                        addMarkerAndGetRoute(CUSTOMER_SOURCE_ID, customerPoint);
                         break;
                     case COMPLETED:
                     case CANCELLED:
@@ -203,7 +203,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
                         break;
                 }
                 initOrderBottomSheet(currentOrder);
-            }else{
+            } else {
                 CameraPosition position = new CameraPosition.Builder()
                         .zoom(15)
                         .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(),
@@ -217,17 +217,17 @@ public class MapFragment extends Fragment implements PermissionsListener {
 
     }
 
-    private void hiddenDeliveryInfo(){
+    private void hiddenDeliveryInfo() {
         root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         bottomSheetBehavior.setHideable(true);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
-    private void visibleDeliveryInfo(){
+    private void visibleDeliveryInfo() {
         int dp1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
                 getActivity().getResources().getDisplayMetrics());
-        FrameLayout.LayoutParams layoutParams =  new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(0,0,0,dp1*70);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(0, 0, 0, dp1 * 70);
         root.setLayoutParams(layoutParams);
         bottomSheetBehavior.setHideable(false);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -291,8 +291,8 @@ public class MapFragment extends Fragment implements PermissionsListener {
         });
 
         qRCodeButton.setOnClickListener(view -> {
-            if (OrderSession.getInstance()!=null){
-                QRDialog dialog = new QRDialog(getActivity(),OrderSession.getInstance().getId());
+            if (OrderSession.getInstance() != null) {
+                QRDialog dialog = new QRDialog(getActivity(), OrderSession.getInstance().getId());
                 dialog.show();
             }
         });
@@ -322,10 +322,19 @@ public class MapFragment extends Fragment implements PermissionsListener {
                         // Draw the route on the map
                         if (navigationMapRoute != null) {
                             navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                        } else if (mapboxMap != null) {
+                            try {
+                                navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                            } catch (NullPointerException e) {
+
+                            }
                         }
-                        navigationMapRoute.addRoute(currentRoute);
+                        try{
+                            navigationMapRoute.addRoute(currentRoute);
+                        }catch (NullPointerException e){
+
+                        }
+
                         Log.e(TAG, "ROUTE CREATE");
                     }
 
@@ -336,11 +345,11 @@ public class MapFragment extends Fragment implements PermissionsListener {
                 });
     }
 
-    private void addMarkerAndGetRoute(String sourceId,Point destinationPoint ){
+    private void addMarkerAndGetRoute(String sourceId, Point destinationPoint) {
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
-        if (destinationPoint==null){
-            destinationPoint=originPoint;
+        if (destinationPoint == null) {
+            destinationPoint = originPoint;
         }
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs(sourceId);
@@ -350,8 +359,8 @@ public class MapFragment extends Fragment implements PermissionsListener {
         getRoute(originPoint, destinationPoint);
 
         LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                .include(new LatLng(destinationPoint.latitude(),destinationPoint.longitude())) // Northeast
-                .include(new LatLng(originPoint.latitude(),originPoint.longitude())) // Southwest
+                .include(new LatLng(destinationPoint.latitude(), destinationPoint.longitude())) // Northeast
+                .include(new LatLng(originPoint.latitude(), originPoint.longitude())) // Southwest
                 .build();
 
         mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100), 1000);
@@ -360,7 +369,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
         button.setBackgroundResource(R.color.mapbox_blue);
     }
 
-    @SuppressWarnings( {"MissingPermission"})
+    @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
         if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
             locationComponent = mapboxMap.getLocationComponent();
@@ -393,8 +402,8 @@ public class MapFragment extends Fragment implements PermissionsListener {
         }
     }
 
-    private void clearRouteAndMarker(Style style){
-        addMarkerAndGetRoute(RESTAURANT_SOURCE_ID,null);
+    private void clearRouteAndMarker(Style style) {
+        addMarkerAndGetRoute(RESTAURANT_SOURCE_ID, null);
         GeoJsonSource sourceRestaurant = style.getSourceAs(RESTAURANT_SOURCE_ID);
         GeoJsonSource sourceCustomer = style.getSourceAs(CUSTOMER_SOURCE_ID);
 
@@ -402,7 +411,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
             sourceRestaurant.setGeoJson(FeatureCollection.fromJson(""));
         }
 
-        if (sourceCustomer!=null){
+        if (sourceCustomer != null) {
             sourceCustomer.setGeoJson(FeatureCollection.fromJson(""));
         }
     }
