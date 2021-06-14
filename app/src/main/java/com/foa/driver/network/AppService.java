@@ -6,18 +6,17 @@ import com.foa.driver.network.body.LoginBody;
 import com.foa.driver.network.body.UpdateActiveBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
-import com.foa.driver.network.response.ApproveDepositData;
+import com.foa.driver.network.response.DepositData;
 import com.foa.driver.network.response.CreateDepositData;
 import com.foa.driver.network.response.LoginData;
 import com.foa.driver.network.response.OrderData;
 import com.foa.driver.network.response.OrderListData;
 import com.foa.driver.network.response.ResponseAdapter;
+import com.foa.driver.network.response.StatisticListData;
 import com.foa.driver.network.response.TransactionListData;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -70,7 +69,7 @@ public interface AppService {
     );
 
     @PATCH("/user/driver/{driverId}/approve-deposit-money-to-main-wallet")
-    Call<ResponseAdapter<ApproveDepositData>> approveDepositMoneyToMainWallet(
+    Call<ResponseAdapter<DepositData>> approveDepositMoneyToMainWallet(
             @Path("driverId") String driverId,
             @Body ApproveDepositBody body
     );
@@ -99,5 +98,15 @@ public interface AppService {
     Call<ResponseAdapter<String>> updateIsActive(
             @Path("driverId") String driverId,
             @Body UpdateActiveBody body
+    );
+
+    @GET("/user/driver/{driverId}/weekly-statistic")
+    Call<ResponseAdapter<StatisticListData>> getStatisticWeekly(
+            @Path("driverId") String driverId
+    );
+
+    @GET("/user/driver/{driverId}/monthly-statistic")
+    Call<ResponseAdapter<StatisticListData>> getStatisticMonthly(
+            @Path("driverId") String driverId
     );
 }

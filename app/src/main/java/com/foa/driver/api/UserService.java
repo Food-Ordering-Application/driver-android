@@ -1,9 +1,11 @@
 package com.foa.driver.api;
 
 
+import android.util.Log;
+
 import com.foa.driver.model.AccountWallet;
 import com.foa.driver.model.DriverTransaction;
-import com.foa.driver.model.Order;
+import com.foa.driver.model.StatisticItem;
 import com.foa.driver.model.enums.TransactionStatus;
 import com.foa.driver.model.enums.TransactionType;
 import com.foa.driver.network.IDataResultCallback;
@@ -14,12 +16,12 @@ import com.foa.driver.network.body.CreateDepositBody;
 import com.foa.driver.network.body.UpdateActiveBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
-import com.foa.driver.network.response.ApproveDepositData;
+import com.foa.driver.network.response.DepositData;
 import com.foa.driver.network.response.CreateDepositData;
-import com.foa.driver.network.response.OrderData;
-import com.foa.driver.network.response.OrderListData;
 import com.foa.driver.network.response.ResponseAdapter;
+import com.foa.driver.network.response.StatisticListData;
 import com.foa.driver.network.response.TransactionListData;
+import com.foa.driver.session.LoginSession;
 import com.foa.driver.util.Constants;
 
 import java.util.List;
@@ -57,17 +59,18 @@ public class UserService {
         });
     }
 
-    public static void approveDepositMoneyToMainWallet(String driverId,String paypalOrderId, IDataResultCallback<Long> resultCallback) {
-        Call<ResponseAdapter<ApproveDepositData>> responseCall = RetrofitClient.getInstance().getAppService()
+    public static void approveDepositMoneyToMainWallet(String driverId,String paypalOrderId, IDataResultCallback<DepositData> resultCallback) {
+        Call<ResponseAdapter<DepositData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .approveDepositMoneyToMainWallet(driverId,new ApproveDepositBody(paypalOrderId));
-        responseCall.enqueue(new Callback<ResponseAdapter<ApproveDepositData>>() {
+        responseCall.enqueue(new Callback<ResponseAdapter<DepositData>>() {
             @Override
-            public void onResponse(Call<ResponseAdapter<ApproveDepositData>> call, Response<ResponseAdapter<ApproveDepositData>> response) {
+            public void onResponse(Call<ResponseAdapter<DepositData>> call, Response<ResponseAdapter<DepositData>> response) {
+                Log.e("PAYPAL_DEPOSIT","api status"+ response.code());
                 if (response.code() == Constants.STATUS_CODE_SUCCESS) {
-                    ResponseAdapter<ApproveDepositData> res = response.body();
+                    ResponseAdapter<DepositData> res = response.body();
                     assert res != null;
                     if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
-                        resultCallback.onSuccess(true,res.getData().getMainBalance());
+                        resultCallback.onSuccess(true,res.getData());
                     } else {
                         resultCallback.onSuccess(false,null);
                     }
@@ -78,7 +81,8 @@ public class UserService {
             }
 
             @Override
-            public void onFailure(Call<ResponseAdapter<ApproveDepositData>> call, Throwable t) {
+            public void onFailure(Call<ResponseAdapter<DepositData>> call, Throwable t) {
+                Log.e("PAYPAL_DEPOSIT","api fail");
                 resultCallback.onSuccess(false,null);
             }
         });
@@ -160,6 +164,62 @@ public class UserService {
 
             @Override
             public void onFailure(Call<ResponseAdapter<TransactionListData>> call, Throwable t) {
+                resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
+    public static void getStatisticMonthly(IDataResultCallback<List<StatisticItem>> resultCallback) {
+        String driverId = LoginSession.getInstance().getDriver().getId();
+        Call<ResponseAdapter<StatisticListData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getStatisticMonthly(driverId);
+        responseCall.enqueue(new Callback<ResponseAdapter<StatisticListData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<StatisticListData>> call, Response<ResponseAdapter<StatisticListData>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<StatisticListData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true,res.getData().getStatisticItemList());
+                    } else {
+                        resultCallback.onSuccess(false,null);
+                    }
+                } else {
+                    resultCallback.onSuccess(false,null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<StatisticListData>> call, Throwable t) {
+                resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
+    public static void getStatisticWeekly(IDataResultCallback<List<StatisticItem>> resultCallback) {
+        String driverId = LoginSession.getInstance().getDriver().getId();
+        Call<ResponseAdapter<StatisticListData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getStatisticWeekly(driverId);
+        responseCall.enqueue(new Callback<ResponseAdapter<StatisticListData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<StatisticListData>> call, Response<ResponseAdapter<StatisticListData>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<StatisticListData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true,res.getData().getStatisticItemList());
+                    } else {
+                        resultCallback.onSuccess(false,null);
+                    }
+                } else {
+                    resultCallback.onSuccess(false,null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<StatisticListData>> call, Throwable t) {
                 resultCallback.onSuccess(false,null);
             }
         });

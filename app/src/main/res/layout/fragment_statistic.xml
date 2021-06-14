@@ -48,23 +48,184 @@
             android:background="@drawable/radio_button_selector"
             android:layout_height="match_parent"/>
     </RadioGroup>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/dayOfWeekChart"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        tools:ignore="MissingConstraints" />
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/dayOfMonthChart"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        tools:ignore="MissingConstraints"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/revenueRecyclerView"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content">
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/dayOfWeekChart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            tools:ignore="MissingConstraints" />
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/dayOfMonthChart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            tools:ignore="MissingConstraints"/>
+        <com.airbnb.lottie.LottieAnimationView
+            android:visibility="visible"
+            android:id="@+id/driverLoadingView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_rawRes="@raw/delivery_riding"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:layout_centerInParent="true"
+            android:layout_above="@+id/loginWrapper"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/detailDayStatisticCart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="100dp"
-        />
+        android:layout_marginTop="10dp"
+        android:background="@drawable/circularbordersolid"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_margin="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/dayTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày 11/06.2021"
+                android:textSize="17sp"
+                android:fontFamily="@font/proximanovaregular"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingRight="8dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circular_grey_bordersolid"
+                    android:padding="10dp"
+                    android:src="@drawable/bills" />
+                <TextView
+                    android:text="Số đơn"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/numOrderFinishedTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="10"
+                    android:gravity="end"
+                    android:textSize="15sp"
+                    android:textColor="@color/goodgrey"
+                    android:fontFamily="@font/proximanovaregular" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:paddingRight="8dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circular_grey_bordersolid"
+                    android:padding="10dp"
+                    android:src="@drawable/money" />
+                <TextView
+                    android:text="Tổng cước"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/totalShippingFeeTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="end"
+                    android:textColor="@color/goodgrey"
+                    android:text="-100.000đ"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/proximanovaregular" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:paddingRight="8dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circular_grey_bordersolid"
+                    android:padding="10dp"
+                    android:src="@drawable/commission" />
+                <TextView
+                    android:text="Hoa hồng"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/commissionTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="end"
+                    android:textColor="@color/goodgrey"
+                    android:text="-100.000đ"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/proximanovaregular" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:paddingRight="8dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circular_grey_bordersolid"
+                    android:padding="10dp"
+                    android:src="@drawable/income" />
+                <TextView
+                    android:text="Thu nhập"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/incomeTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:fontFamily="@font/proximanovaregular"
+                    android:gravity="end"
+                    android:text="100.000đ"
+                    android:textColor="@color/goodgrey"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
 
 </LinearLayout>

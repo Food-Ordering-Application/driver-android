@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,17 +14,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.foa.driver.R;
-import com.foa.driver.api.OrderService;
 import com.foa.driver.api.UserService;
-import com.foa.driver.model.Order;
-import com.foa.driver.network.IResultCallback;
-import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.session.LoginSession;
-import com.foa.driver.util.Helper;
 import com.paypal.checkout.paymentbutton.PaymentButton;
-import com.stfalcon.swipeablebutton.SwipeableButton;
+import com.paypal.checkout.paymentbutton.PaymentButtonEligibilityStatus;
+import com.paypal.checkout.paymentbutton.PaymentButtonEligibilityStatusChanged;
 
-import kotlin.Unit;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateDepositDialog extends Dialog {
 
@@ -33,10 +28,13 @@ public class CreateDepositDialog extends Dialog {
     private EditText money;
     private PaymentButton payPalButton;
     private Button withDrawButton;
+    private Button createDepositButton;
     private boolean isDeposit;
     private long numberMoney;
     private TextView titleTransaction;
-    private BalanceChangeListener listener;
+    private BalanceChangeListener balanceChangeListener;
+    private WithdrawPendingListener withdrawPendingListener;
+
 
     public CreateDepositDialog(Context context, boolean isDeposit) {
         super(context);
@@ -63,15 +61,16 @@ public class CreateDepositDialog extends Dialog {
         money = findViewById(R.id.moneyInput);
         payPalButton = findViewById(R.id.payPalButton);
         withDrawButton = findViewById(R.id.withdrawButton);
+        createDepositButton = findViewById(R.id.createDepositButton);
         titleTransaction = findViewById(R.id.titleTransaction);
         if (isDeposit){
             initPayPal();
-            payPalButton.setVisibility(View.VISIBLE);
+            createDepositButton.setVisibility(View.VISIBLE);
             withDrawButton.setVisibility(View.GONE);
             titleTransaction.setText("NẠP TIỀN");
         }else{
             initWithdraw();
-            payPalButton.setVisibility(View.GONE);
+            createDepositButton.setVisibility(View.GONE);
             withDrawButton.setVisibility(View.VISIBLE);
             withDrawButton.setEnabled(false);
             titleTransaction.setText("RÚT TIỀN");
@@ -90,13 +89,20 @@ public class CreateDepositDialog extends Dialog {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                numberMoney = Long.parseLong(money.getText().toString());
-                boolean isEnable = numberMoney%1000==0 && numberMoney >200000;
-                payPalButton.setEnabled(isEnable);
-                withDrawButton.setEnabled(isEnable);
+                String moneyStr =money.getText().toString();
+                if (moneyStr.length()>0){
+                    numberMoney = Long.parseLong(moneyStr);
+                    boolean isEnable = numberMoney%1000==0 && numberMoney >=200000;
+                    withDrawButton.setEnabled(isEnable);
+                    createDepositButton.setEnabled(isEnable);
+                }
+
             }
         });
 
+        createDepositButton.setOnClickListener(view -> {
+            payPalButton.performClick();
+        });
 
     }
 
@@ -106,11 +112,22 @@ public class CreateDepositDialog extends Dialog {
                     UserService.createDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(), numberMoney, (success, paypalId) -> {
                         createOrderActions.set(paypalId);
                     });
-                    dismiss();
                 }
                        ,
-                approval -> UserService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), (success,mainBalance) -> {
-                    if (listener!=null) listener.onChange(mainBalance);
+                approval -> UserService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), (success,depositData) -> {
+                    if (success){
+                        if (balanceChangeListener !=null){
+                            balanceChangeListener.onChange(depositData.getMainBalance());
+                            Log.e("PAYPAL_DEPOSIT","successed");
+                        }
+                    }else{
+                        if (balanceChangeListener !=null){
+                            balanceChangeListener.onChange(-1);
+                            Log.e("PAYPAL_DEPOSIT","fail");
+
+                        }
+                    }
+
                 })
         );
     }
@@ -119,6 +136,7 @@ public class CreateDepositDialog extends Dialog {
         withDrawButton.setOnClickListener(view -> {
             UserService.withdrawMoneyToPayPalAccount(LoginSession.getInstance().getDriver().getId(), numberMoney, success -> {
                 if (success){
+                   if(withdrawPendingListener!=null) withdrawPendingListener.onPending(numberMoney);
                     dismiss();
                 }
             });
@@ -127,10 +145,18 @@ public class CreateDepositDialog extends Dialog {
     }
 
     public void setBalanceChangeListener(BalanceChangeListener listener){
-        this.listener = listener;
+        this.balanceChangeListener = listener;
     }
 
     public interface BalanceChangeListener{
-        void onChange(Long balance);
+        void onChange(long balance);
+    }
+
+    public void setWithdrawPendingListener(WithdrawPendingListener listener){
+        this.withdrawPendingListener = listener;
+    }
+
+    public interface WithdrawPendingListener{
+        void onPending(long pendingMoney);
     }
 }

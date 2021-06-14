@@ -2,15 +2,15 @@ package com.foa.driver.network.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ApproveDepositData {
+public class DepositData {
     @SerializedName( "mainBalance" )
-    Long mainBalance;
+    long mainBalance;
 
     public long getMainBalance() {
         return mainBalance;
     }
 
-    public void setMainBalance(Long mainBalance) {
+    public void setMainBalance(long mainBalance) {
         this.mainBalance = mainBalance;
     }
 }

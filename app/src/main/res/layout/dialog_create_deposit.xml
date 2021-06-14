@@ -70,11 +70,20 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:visibility="gone"
-            android:saveEnabled="false"
             />
         <Button
             android:text="RÚT TIỀN"
             android:id="@+id/withdrawButton"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:enabled="false"
+            />
+        <Button
+            android:text="NẠP TIỀN"
+            android:id="@+id/createDepositButton"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="60dp"

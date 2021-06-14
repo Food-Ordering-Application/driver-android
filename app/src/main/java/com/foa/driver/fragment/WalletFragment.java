@@ -6,46 +6,28 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.foa.driver.BuildConfig;
 import com.foa.driver.R;
 import com.foa.driver.adapter.TransactionListAdapter;
-import com.foa.driver.api.OrderService;
 import com.foa.driver.api.UserService;
 import com.foa.driver.dialog.CreateDepositDialog;
-import com.foa.driver.model.AccountWallet;
-import com.foa.driver.model.DriverTransaction;
-import com.foa.driver.network.IDataResultCallback;
-import com.foa.driver.network.IResultCallback;
+import com.foa.driver.network.response.DepositData;
 import com.foa.driver.session.LoginSession;
 import com.foa.driver.util.Helper;
-import com.mapbox.mapboxsdk.plugins.annotation.LineManager;
-import com.paypal.checkout.approve.Approval;
-import com.paypal.checkout.approve.OnApprove;
-import com.paypal.checkout.createorder.CreateOrder;
-import com.paypal.checkout.createorder.CreateOrderActions;
-import com.paypal.checkout.createorder.CurrencyCode;
-import com.paypal.checkout.createorder.OrderIntent;
-import com.paypal.checkout.createorder.UserAction;
-import com.paypal.checkout.order.Amount;
-import com.paypal.checkout.order.AppContext;
-import com.paypal.checkout.order.CaptureOrderResult;
-import com.paypal.checkout.order.OnCaptureComplete;
-import com.paypal.checkout.order.Order;
-import com.paypal.checkout.order.PurchaseUnit;
-import com.paypal.checkout.paymentbutton.PaymentButton;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
 
 public class WalletFragment extends Fragment {
 
@@ -57,6 +39,8 @@ public class WalletFragment extends Fragment {
     private TransactionListAdapter transactionListAdapter;
     private RecyclerView transactionRecyclerView;
     private LinearLayout processLoading;
+    private LinearLayout withdrawPendingLayout;
+    private TextView pendingMoneyTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,23 +53,33 @@ public class WalletFragment extends Fragment {
     private void init(){
         transactionRecyclerView = view.findViewById(R.id.transactionRecyclerView);
         processLoading = view.findViewById(R.id.processLoading);
-
         depositButton =  view.findViewById(R.id.depositButton);
         withdrawButton =  view.findViewById(R.id.withdrawButton);
         mainBalanceTextView = view.findViewById(R.id.mainBalanceTextView);
         depositBalance = view.findViewById(R.id.depositBalance);
         mainBalanceTextView.setText(Helper.formatMoney(0));
+        withdrawPendingLayout = view.findViewById(R.id.withdrawPendingText);
+        pendingMoneyTextView = view.findViewById(R.id.pendingMoneyTextView);
 
         depositButton.setOnClickListener(view -> {
             CreateDepositDialog dialog = new CreateDepositDialog(getActivity(),true);
             dialog.setBalanceChangeListener(balance -> {
-                mainBalanceTextView.setText(Helper.formatMoney(balance));
+                if (balance==-1){
+                    Toast.makeText(getActivity(), "Nạp tiền thất bại", Toast.LENGTH_SHORT).show();
+                }else{
+                    mainBalanceTextView.setText(Helper.formatMoney(balance));
+                }
+                dialog.dismiss();
             });
             dialog.show();
         });
 
         withdrawButton.setOnClickListener(view -> {
             CreateDepositDialog dialog = new CreateDepositDialog(getActivity(),false);
+            dialog.setWithdrawPendingListener(pendingMoney -> {
+                pendingMoneyTextView.setText(Helper.formatMoney(pendingMoney));
+                withdrawPendingLayout.setVisibility(View.VISIBLE);
+            });
             dialog.show();
         });
 
@@ -103,6 +97,38 @@ public class WalletFragment extends Fragment {
             transactionRecyclerView.setLayoutManager(layoutManager);
             transactionRecyclerView.setAdapter(transactionListAdapter);
             processLoading.setVisibility(View.GONE);
+        });
+
+        initPusher();
+    }
+
+    private void initPusher(){
+        PusherOptions options = new PusherOptions();
+        options.setCluster("ap1");
+
+        Pusher pusher = new Pusher("29ff5ecb5e2501177186", options);
+
+        pusher.connect(new ConnectionEventListener() {
+            @Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+
+            }
+
+            @Override
+            public void onError(String message, String code, Exception e) {
+            }
+        }, ConnectionState.ALL);
+
+        Channel channel = pusher.subscribe(LoginSession.getInstance().getDriver().getId());
+
+        channel.bind("new-order", event -> {
+            getActivity().runOnUiThread(() -> {
+                Gson g = new Gson();
+                DepositData depositData = g.fromJson(event.getData(), DepositData.class);
+                mainBalanceTextView.setText(Helper.formatMoney(depositData.getMainBalance()));
+                withdrawPendingLayout.setVisibility(View.GONE);
+            });
+
         });
     }
 }
