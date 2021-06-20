@@ -17,11 +17,6 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.Driver">
-        <activity
-            android:name=".MapNavigationActivity"
-            android:label="@string/title_activity_map_navigation"
-            android:theme="@style/Theme.Driver.NoActionBar">
-        </activity>
 
         <service android:name=".service.NotificationsMessagingService">
             <intent-filter android:priority="1">
@@ -53,7 +48,7 @@
 
         </activity>
 
-        <service android:name=".service.NotificationService" />
+        <service android:name=".service.LocationService" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

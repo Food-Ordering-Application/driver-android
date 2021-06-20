@@ -11,13 +11,16 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.foa.driver.api.OrderService;
+import com.foa.driver.api.UserService;
 import com.foa.driver.dialog.NewDeliveryDialog;
 import com.foa.driver.dialog.QRDialog;
 import com.foa.driver.model.Order;
 import com.foa.driver.model.enums.OrderStatusQuery;
 import com.foa.driver.network.IDataResultCallback;
+import com.foa.driver.network.IResultCallback;
 import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.LoginSession;
+import com.foa.driver.session.NotificationOrderIdSession;
 import com.foa.driver.session.OrderSession;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
@@ -71,7 +74,27 @@ public class MainActivity extends AppCompatActivity  {
         PushNotifications.addDeviceInterest("a22f3f78-be7f-11eb-8529-0242ac130003");
 
         initPusher();
+        checkAndShowNotificationOrder();
 
+    }
+
+    private void checkAndShowNotificationOrder(){
+        String orderId = NotificationOrderIdSession.getInstance();
+        if(orderId!=null){
+            NotificationOrderIdSession.clearInstance();
+            OrderService.getOrderById(orderId, (success, data) -> {
+                if (success){
+                    NewDeliveryDialog dialog =  new NewDeliveryDialog(this, data);
+                    dialog.setAcceptedListener((isAccept,order) -> {
+                        if (isAccept){
+                            OrderSession.setInstance(order);
+                            navController.navigate(R.id.navigation_map);
+                        }
+                    });
+                    dialog.show();
+                }
+            });
+        }
     }
 
     @Override
@@ -103,6 +126,15 @@ public class MainActivity extends AppCompatActivity  {
                 DriverModeSession.setInstance(data.get(0).getDelivery().getStatus());
                 //navController.navigate(R.id.navigation_map);
             }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LoginSession.clearInstance();
+        UserService.updateIsActive(false, null, success -> {
+            if (success) Log.e("Update Active :","false");
         });
     }
 

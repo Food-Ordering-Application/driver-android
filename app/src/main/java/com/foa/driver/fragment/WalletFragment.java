@@ -121,7 +121,7 @@ public class WalletFragment extends Fragment {
 
         Channel channel = pusher.subscribe(LoginSession.getInstance().getDriver().getId());
 
-        channel.bind("new-order", event -> {
+        channel.bind("balance-changed", event -> {
             getActivity().runOnUiThread(() -> {
                 Gson g = new Gson();
                 DepositData depositData = g.fromJson(event.getData(), DepositData.class);

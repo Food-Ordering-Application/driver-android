@@ -22,6 +22,7 @@ import com.foa.driver.network.body.LoginBody;
 import com.foa.driver.network.response.LoginData;
 import com.foa.driver.network.response.ResponseAdapter;
 import com.foa.driver.session.LoginSession;
+import com.foa.driver.session.NotificationOrderIdSession;
 import com.foa.driver.util.Constants;
 import com.foa.driver.util.Helper;
 import com.nineoldandroids.animation.Animator;
@@ -54,7 +55,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         txtpassword = findViewById(R.id.txtPassword);
         loading = findViewById(R.id.driverLoadingView);
 
-        login();
+        if(LoginSession.getInstance().getDriver()!=null){
+            if(getIntent().getExtras()!=null){
+                String orderId  = getIntent().getExtras().getString("orderId");
+                if (orderId!=null){
+                    NotificationOrderIdSession.setInstance(orderId);
+                }
+            }
+            Intent intent  = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+        //login();
     }
 
     @Override

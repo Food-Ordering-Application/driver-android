@@ -12,13 +12,12 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaParser;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
+import android.util.TimingLogger;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,15 +25,22 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.foa.driver.receiver.NotificationReceiver;
+import com.foa.driver.api.UserService;
+import com.foa.driver.network.IResultCallback;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
-import java.io.Console;
-
-public class NotificationService extends Service {
+public class LocationService extends Service {
 
     private LocationManager mLocationManager = null;
-    private final int LOCATION_REFRESH_TIME = 5000;
-    private final int LOCATION_REFRESH_TIME_SHORT = 3000;
+    private TimingLogger timings;
+    private FusedLocationProviderClient client;
+    private final String TAG = "LOCATION_SERVICE";
+    private boolean started = false;
+    private Handler handler = new Handler();
+    private Location lastLocation;
+
+    private final int LOCATION_REFRESH_TIME = 10000;
     private final int LOCATION_REFRESH_DISTANCE = 0;
 
     @Nullable
@@ -50,8 +56,18 @@ public class NotificationService extends Service {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mLocationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, new ServiceLocationListener());
+
+        client = LocationServices.getFusedLocationProviderClient(this);
+        client.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        lastLocation = location;
+                        Log.e("Service init last location", location.getLatitude() + "," + location.getLongitude());
+
+                    }
+                });
+
+        timings = new TimingLogger("Update_Location", "Initialization");
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
@@ -60,8 +76,7 @@ public class NotificationService extends Service {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private void startMyOwnForeground()
-    {
+    private void startMyOwnForeground() {
         String NOTIFICATION_CHANNEL_ID = "example.permanence";
         String channelName = "Background Service";
         NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
@@ -74,7 +89,7 @@ public class NotificationService extends Service {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("Ứng dụng Driver đang chạy dưới nền")
+                .setContentTitle("Ứng dụng Driver đang thu thập vị trí")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
@@ -83,24 +98,60 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }else{
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, new ServiceLocationListener());
+            startUpdateLocation();
+        }
+
         return START_STICKY;
     }
+
+    private Runnable runnable = () -> {
+        updateLocationToServer();
+        if(started) {
+            startUpdateLocation();
+        }
+    };
+
+    public void stopUpdateLocation() {
+        started = false;
+        handler.removeCallbacks(runnable);
+    }
+
+    public void startUpdateLocation() {
+        started = true;
+        handler.postDelayed(runnable, 15000);
+    }
+
+    private void updateLocationToServer() {
+
+        UserService.updateLocation(lastLocation, success -> {
+            if (success)
+            Log.e("service", "call api:"+ lastLocation.getLatitude()+";"+lastLocation.getLongitude());
+        });
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("restartservice");
-        broadcastIntent.setClass(this, NotificationReceiver.class);
-        this.sendBroadcast(broadcastIntent);
+        stopUpdateLocation();
+        Log.e("locaton","service destroy");
     }
 
-    private class ServiceLocationListener implements LocationListener {
-        Location lastLocation;
+    private class ServiceLocationListener implements LocationListener{
+
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            lastLocation=location;
-            Log.e("location backround:",location.getLatitude()+";"+location.getLongitude());
+            lastLocation = location;
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
         }
 
         @Override
@@ -113,4 +164,5 @@ public class NotificationService extends Service {
 
         }
     }
+
 }

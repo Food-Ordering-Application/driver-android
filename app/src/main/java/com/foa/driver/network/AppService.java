@@ -2,10 +2,12 @@ package com.foa.driver.network;
 
 import com.foa.driver.network.body.ApproveDepositBody;
 import com.foa.driver.network.body.CreateDepositBody;
+import com.foa.driver.network.body.LocationBody;
 import com.foa.driver.network.body.LoginBody;
 import com.foa.driver.network.body.UpdateActiveBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
+import com.foa.driver.network.response.ActiveData;
 import com.foa.driver.network.response.DepositData;
 import com.foa.driver.network.response.CreateDepositData;
 import com.foa.driver.network.response.LoginData;
@@ -20,6 +22,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -94,10 +97,17 @@ public interface AppService {
             @Query("transactionStatus") String transactionStatus
     );
 
-    @PATCH("/user/driver/{driverId}/update-isactive")
+    @GET("/user/driver/active")
+    Call<ResponseAdapter<ActiveData>> getActive();
+
+    @PUT("/user/driver/active")
     Call<ResponseAdapter<String>> updateIsActive(
-            @Path("driverId") String driverId,
             @Body UpdateActiveBody body
+    );
+
+    @PUT("user/driver/location")
+    Call<ResponseAdapter<String>> updateLocation(
+            @Body LocationBody body
     );
 
     @GET("/user/driver/{driverId}/weekly-statistic")

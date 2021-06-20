@@ -1,30 +1,24 @@
 package com.foa.driver.fragment;
 
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
-import com.foa.driver.MapNavigationActivity;
 import com.foa.driver.R;
 import com.foa.driver.api.OrderService;
 import com.foa.driver.dialog.QRDialog;
@@ -34,13 +28,10 @@ import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.OrderSession;
 import com.foa.driver.util.Helper;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.zxing.qrcode.encoder.QRCode;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
-import com.mapbox.api.directions.v5.models.RouteLeg;
-import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
@@ -61,7 +52,6 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.util.List;
 
-import androidmads.library.qrgenearator.QRGEncoder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,7 +62,6 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 // classes needed to initialize map
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 // classes needed to add the location component
 
@@ -101,7 +90,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
     private DirectionsRoute currentRoute;
     private static final String TAG = "DirectionsActivity";
     private NavigationMapRoute navigationMapRoute;
-    private Button button;
+    private Button startNavigationButton;
     private Order currentOrder;
     private ConstraintLayout bottomSheetLayout;
 
@@ -119,9 +108,10 @@ public class MapFragment extends Fragment implements PermissionsListener {
 
         bottomSheetLayout = root.findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-        hiddenDeliveryInfo();
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+        hiddenDeliveryInfo();
 
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
         mapView.onCreate(savedInstanceState);
@@ -170,8 +160,9 @@ public class MapFragment extends Fragment implements PermissionsListener {
             addDestinationIconSymbolLayer(style);
 
 
-            button = root.findViewById(R.id.startButton);
-            button.setOnClickListener(v -> {
+            startNavigationButton = root.findViewById(R.id.startButton);
+            startNavigationButton.setEnabled(false);
+            startNavigationButton.setOnClickListener(v -> {
                 boolean simulateRoute = true;
                 NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                         .directionsRoute(currentRoute)
@@ -219,6 +210,7 @@ public class MapFragment extends Fragment implements PermissionsListener {
 
     private void hiddenDeliveryInfo() {
         root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        //mapView.setLayoutParams(new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         bottomSheetBehavior.setHideable(true);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
@@ -226,9 +218,15 @@ public class MapFragment extends Fragment implements PermissionsListener {
     private void visibleDeliveryInfo() {
         int dp1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
                 getActivity().getResources().getDisplayMetrics());
+
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.setMargins(0, 0, 0, dp1 * 70);
         root.setLayoutParams(layoutParams);
+
+//        CoordinatorLayout.LayoutParams layoutParams2 = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        layoutParams2.setMargins(0, 0, 0, dp1 * 120);
+//        mapView.setLayoutParams(layoutParams2);
+
         bottomSheetBehavior.setHideable(false);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
@@ -318,13 +316,13 @@ public class MapFragment extends Fragment implements PermissionsListener {
                         }
 
                         currentRoute = response.body().routes().get(0);
+                        startNavigationButton.setEnabled(currentRoute != null);
 
                         // Draw the route on the map
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else if (mapboxMap != null) {
+                        if (mapboxMap != null) {
                             try {
-                                navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
+                                navigationMapRoute = new NavigationMapRoute(null, mapView,
+                                        mapboxMap, R.style.NavigationMapRoute);
                             } catch (NullPointerException e) {
 
                             }
@@ -348,7 +346,9 @@ public class MapFragment extends Fragment implements PermissionsListener {
     private void addMarkerAndGetRoute(String sourceId, Point destinationPoint) {
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
+        boolean isBound = true;
         if (destinationPoint == null) {
+            isBound = false;
             destinationPoint = originPoint;
         }
 
@@ -358,15 +358,15 @@ public class MapFragment extends Fragment implements PermissionsListener {
         }
         getRoute(originPoint, destinationPoint);
 
-        LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                .include(new LatLng(destinationPoint.latitude(), destinationPoint.longitude())) // Northeast
-                .include(new LatLng(originPoint.latitude(), originPoint.longitude())) // Southwest
-                .build();
+        if(isBound){
+            LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                    .include(new LatLng(destinationPoint.latitude(), destinationPoint.longitude())) // Northeast
+                    .include(new LatLng(originPoint.latitude(), originPoint.longitude())) // Southwest
+                    .build();
 
-        mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100), 1000);
-
-        button.setEnabled(true);
-        button.setBackgroundResource(R.color.mapbox_blue);
+            mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,100,100,100,500), 1000);
+        }
+        startNavigationButton.setBackgroundResource(R.color.mapbox_blue);
     }
 
     @SuppressWarnings({"MissingPermission"})

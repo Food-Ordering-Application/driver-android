@@ -39,6 +39,9 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class StatisticFragment extends Fragment {
@@ -80,18 +83,28 @@ public class StatisticFragment extends Fragment {
         super.onResume();
         loadData(R.id.todayRadioButton);
     }
-    private void loadDetailStatistic(StatisticItem item){
-        dayDetailTextView.setText("");
-        numberOrdersTextView.setText(item.getNumOrderFinished());
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        StatisticMonthlyCatching.clearInstance();
+        StatisticWeeklyCatching.clearInstance();
+    }
+
+    private void loadDetailStatistic(int index, boolean isMonth, StatisticItem item){
+        dayDetailTextView.setText(getCurrentDateByIndex(index,isMonth));
+        numberOrdersTextView.setText(String.valueOf(item.getNumOrderFinished()));
         totalShippingFee.setText(Helper.formatMoney(item.getTotalShippingFee()));
         commissionTextView.setText(Helper.formatMoney(item.getCommission()));
         incomeTextView.setText(Helper.formatMoney(item.getIncome()));
+        detailDayStatisticCart.setVisibility(View.VISIBLE);
     }
 
     @SuppressLint("NonConstantResourceId")
     private void initTimeRadioGroup(){
         RadioGroup radioGroup = root.findViewById(R.id.timeRadioGroup);
         radioGroup.setOnCheckedChangeListener((rd, i) -> {
+            detailDayStatisticCart.setVisibility(View.GONE);
            switch (rd.getCheckedRadioButtonId()){
                case R.id.todayRadioButton:
                    loadData(R.id.todayRadioButton);
@@ -110,66 +123,80 @@ public class StatisticFragment extends Fragment {
         List<StatisticItem> cachingList;
         switch (radioButtonId){
             case R.id.todayRadioButton:
+                driverLoadingView.setVisibility(View.GONE);
                 cachingList =StatisticWeeklyCatching.getOrderCatching();
                 if (cachingList!=null){
                     dayOfWeekChart.setData(createBarEntry(StatisticWeeklyCatching.getOrderCatching()));
-                    loadDetailStatistic(cachingList.get(0));
+                    int index = getCurrentDateIndexInWeek();
+                    loadDetailStatistic(index,false,cachingList.get(index));
                 }else{
                     driverLoadingView.setVisibility(View.VISIBLE);
+                    detailDayStatisticCart.setVisibility(View.GONE);
                     UserService.getStatisticWeekly((success,data) -> {
                         if (success){
-                            //dayOfWeekChart.setData(createBarEntry(data));
                             StatisticWeeklyCatching.setInstance(data);
+                            int index = getCurrentDateIndexInWeek();
+                            loadDetailStatistic(index,false,data.get(index));
                             driverLoadingView.setVisibility(View.GONE);
+                            detailDayStatisticCart.setVisibility(View.VISIBLE);
                         }
 
                     });
                 }
+
+                XAxis xAxis = dayOfWeekChart.getXAxis();
+                xAxis.setValueFormatter(new DateForFormatter());
                 dayOfWeekChart.setVisibility(View.GONE);
                 dayOfMonthChart.setVisibility(View.GONE);
                 break;
             case R.id.thisWeekRadioButton:
+                driverLoadingView.setVisibility(View.GONE);
+                dayOfMonthChart.setVisibility(View.GONE);
                 if (StatisticWeeklyCatching.getOrderCatching()!=null){
                     dayOfWeekChart.setData(createBarEntry(StatisticWeeklyCatching.getOrderCatching()));
+                    dayOfMonthChart.setVisibleXRangeMaximum(7);
+                    dayOfWeekChart.setVisibility(View.VISIBLE);
                 }else{
                     driverLoadingView.setVisibility(View.VISIBLE);
                     UserService.getStatisticWeekly((success,data) -> {
                         if (success){
                             dayOfWeekChart.setData(createBarEntry(data));
+                            dayOfWeekChart.setVisibleXRangeMaximum(7);
                             StatisticWeeklyCatching.setInstance(data);
                             driverLoadingView.setVisibility(View.GONE);
-
+                            detailDayStatisticCart.setVisibility(View.VISIBLE);
+                            dayOfWeekChart.setVisibility(View.VISIBLE);
                         }
 
                     });
                 }
-                XAxis xAxis = dayOfWeekChart.getXAxis();
-                dayOfWeekChart.setVisibleXRangeMaximum(7);
-                xAxis.setValueFormatter(new DateForFormatter());
-                dayOfWeekChart.setVisibility(View.VISIBLE);
-                dayOfMonthChart.setVisibility(View.GONE);
+
                 break;
             case R.id.thisMonthRadioButton:
+                driverLoadingView.setVisibility(View.GONE);
                 if (StatisticMonthlyCatching.getOrderCatching()!=null){
-                    dayOfWeekChart.setData(createBarEntry(StatisticMonthlyCatching.getOrderCatching()));
+                    dayOfMonthChart.setData(createBarEntry(StatisticMonthlyCatching.getOrderCatching()));
+                    dayOfMonthChart.setVisibleXRangeMaximum(10);
+                    dayOfMonthChart.moveViewToX(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                    dayOfMonthChart.setVisibility(View.VISIBLE);
                 }else{
                     driverLoadingView.setVisibility(View.VISIBLE);
+                    dayOfWeekChart.setVisibility(View.GONE);
                     UserService.getStatisticMonthly((success,data) -> {
                         if (success){
-                            dayOfWeekChart.setData(createBarEntry(data));
+                            dayOfMonthChart.setData(createBarEntry(data));
+                            dayOfMonthChart.setVisibleXRangeMaximum(10);
                             StatisticMonthlyCatching.setInstance(data);
                             driverLoadingView.setVisibility(View.GONE);
-
+                            detailDayStatisticCart.setVisibility(View.VISIBLE);
+                            dayOfMonthChart.setVisibility(View.VISIBLE);
                         }
 
                     });
                 }
-                dayOfMonthChart.setVisibleXRangeMaximum(10);
-                dayOfWeekChart.setVisibility(View.GONE);
-                dayOfMonthChart.setVisibility(View.VISIBLE);
+
                 break;
         }
-        dayOfWeekChart.invalidate();
     }
 
     private BarData createBarEntry(List<StatisticItem> statisticItems){
@@ -209,13 +236,14 @@ public class StatisticFragment extends Fragment {
         dayOfWeekChart.getDescription().setEnabled(false);
         dayOfWeekChart.setScaleEnabled(false);
         dayOfWeekChart.setVisibleXRangeMaximum(7);
+        xAxis.setValueFormatter(new DateForFormatter());
         dayOfWeekChart.animateY(1500);
         dayOfWeekChart.invalidate();
 
         dayOfWeekChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                loadDetailStatistic(StatisticWeeklyCatching.getOrderCatching().get((int)e.getX()));
+                loadDetailStatistic((int)e.getX()-1,false,StatisticWeeklyCatching.getOrderCatching().get((int)e.getX()-1));
             }
 
             @Override
@@ -250,14 +278,14 @@ public class StatisticFragment extends Fragment {
         dayOfMonthChart.setOverScrollMode(View.SCROLL_AXIS_HORIZONTAL);
         dayOfMonthChart.getDescription().setEnabled(false);
         dayOfMonthChart.setScaleEnabled(false);
-        dayOfMonthChart.setVisibleXRangeMaximum(7);
+        dayOfMonthChart.setVisibleXRangeMaximum(10);
         dayOfMonthChart.animateY(1500);
         dayOfMonthChart.invalidate();
 
         dayOfMonthChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                loadDetailStatistic(StatisticMonthlyCatching.getOrderCatching().get((int)e.getX()));
+                loadDetailStatistic((int)e.getX()-1,true,StatisticMonthlyCatching.getOrderCatching().get((int)e.getX()-1));
             }
 
             @Override
@@ -267,14 +295,36 @@ public class StatisticFragment extends Fragment {
         });
     }
 
+    private int getCurrentDateIndexInWeek(){
+        Calendar calendar = Calendar.getInstance();
+        int index =  calendar.get(Calendar.DAY_OF_WEEK);
+        if (index==1) return 6;//CN index 1->6
+        return index-2;//Còn lại index giảm 2
+    }
+
+    private String  getCurrentDateByIndex(int index, boolean isMonth){
+        Calendar calendar = Calendar.getInstance();
+        if (isMonth){
+            calendar.set(Calendar.DAY_OF_MONTH,index+1);
+        }else{
+            int dayOfWeek = getCurrentDateIndexInWeek();
+            calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH,index  - dayOfWeek);
+        }
+       return Helper.dateFormat.format(calendar.getTime());
+    }
+
     class DateForFormatter implements IAxisValueFormatter {
         String[] days = {"","Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "CN"};
-        private boolean isDate;
         public DateForFormatter(){}
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            return isDate?  days[(int)value] : String.valueOf((int)value);
+            if(value>=0){
+                return days[(int)value];
+            } else{
+                return "";
+            }
         }
 
         @Override
@@ -288,11 +338,10 @@ public class StatisticFragment extends Fragment {
 
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-
+            if (value==0) return "";
             return (int)value/1000 + "K";
         }
     }
-
 
 
 }

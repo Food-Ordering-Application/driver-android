@@ -1,6 +1,7 @@
 package com.foa.driver.api;
 
 
+import android.location.Location;
 import android.util.Log;
 
 import com.foa.driver.model.AccountWallet;
@@ -13,11 +14,14 @@ import com.foa.driver.network.IResultCallback;
 import com.foa.driver.network.RetrofitClient;
 import com.foa.driver.network.body.ApproveDepositBody;
 import com.foa.driver.network.body.CreateDepositBody;
+import com.foa.driver.network.body.LocationBody;
 import com.foa.driver.network.body.UpdateActiveBody;
 import com.foa.driver.network.body.WithdrawMoneyBody;
 import com.foa.driver.network.response.AccountWalletData;
+import com.foa.driver.network.response.ActiveData;
 import com.foa.driver.network.response.DepositData;
 import com.foa.driver.network.response.CreateDepositData;
+import com.foa.driver.network.response.LoginData;
 import com.foa.driver.network.response.ResponseAdapter;
 import com.foa.driver.network.response.StatisticListData;
 import com.foa.driver.network.response.TransactionListData;
@@ -32,7 +36,8 @@ import retrofit2.Response;
 
 public class UserService {
 
-    public static void createDepositMoneyToMainWallet(String driverId,long moneyToDeposit, IDataResultCallback<String> resultCallback) {
+    public static void createDepositMoneyToMainWallet(long moneyToDeposit, IDataResultCallback<String> resultCallback) {
+        String driverId = LoginSession.getInstance().getDriver().getId();
         Call<ResponseAdapter<CreateDepositData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .createDepositMoneyToMainWallet(driverId,new CreateDepositBody(moneyToDeposit));
         responseCall.enqueue(new Callback<ResponseAdapter<CreateDepositData>>() {
@@ -59,7 +64,8 @@ public class UserService {
         });
     }
 
-    public static void approveDepositMoneyToMainWallet(String driverId,String paypalOrderId, IDataResultCallback<DepositData> resultCallback) {
+    public static void approveDepositMoneyToMainWallet(String paypalOrderId, IDataResultCallback<DepositData> resultCallback) {
+        String driverId = LoginSession.getInstance().getDriver().getId();
         Call<ResponseAdapter<DepositData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .approveDepositMoneyToMainWallet(driverId,new ApproveDepositBody(paypalOrderId));
         responseCall.enqueue(new Callback<ResponseAdapter<DepositData>>() {
@@ -225,9 +231,69 @@ public class UserService {
         });
     }
 
-    public static void updateIsActive(String driverId,boolean isActive, IResultCallback resultCallback) {
+    public static void getActive( IDataResultCallback<ActiveData> resultCallback) {
+        Call<ResponseAdapter<ActiveData>> responseCall = RetrofitClient.getInstance().getAppService()
+                .getActive();
+        responseCall.enqueue(new Callback<ResponseAdapter<ActiveData>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<ActiveData>> call, Response<ResponseAdapter<ActiveData>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<ActiveData> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true,res.getData());
+                    } else {
+                        resultCallback.onSuccess(false,null);
+                    }
+                } else {
+                    resultCallback.onSuccess(false,null);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<ActiveData>> call, Throwable t) {
+                resultCallback.onSuccess(false,null);
+            }
+        });
+    }
+
+    public static void updateIsActive(boolean isActive, Location location, IResultCallback resultCallback) {
+        UpdateActiveBody body;
+        if (isActive && location!=null){
+           body = new UpdateActiveBody(true,location.getLatitude(),location.getLongitude());
+        }else{
+            body = new UpdateActiveBody(false);
+        }
         Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
-                .updateIsActive(driverId,new UpdateActiveBody(isActive));
+                .updateIsActive(body);
+        responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
+            @Override
+            public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {
+                if (response.code() == Constants.STATUS_CODE_SUCCESS) {
+                    ResponseAdapter<String> res = response.body();
+                    assert res != null;
+                    if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
+                        resultCallback.onSuccess(true);
+                    } else {
+                        resultCallback.onSuccess(false);
+                    }
+                } else {
+                    resultCallback.onSuccess(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseAdapter<String>> call, Throwable t) {
+                resultCallback.onSuccess(false);
+            }
+        });
+    }
+
+    public static void updateLocation(Location location, IResultCallback resultCallback) {
+        Call<ResponseAdapter<String>> responseCall = RetrofitClient.getInstance().getAppService()
+                .updateLocation(new LocationBody(location.getLatitude(),location.getLongitude()));
         responseCall.enqueue(new Callback<ResponseAdapter<String>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<String>> call, Response<ResponseAdapter<String>> response) {

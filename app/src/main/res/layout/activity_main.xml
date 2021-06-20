@@ -27,25 +27,4 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/mobile_navigation" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone">
-        <Button
-            android:id="@+id/btn_startService"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Start services"/>
-        <Button
-            android:id="@+id/btn_stopService"
-            app:layout_constraintTop_toBottomOf="@+id/btn_startService"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop services"/>
-    </LinearLayout>
-
-
 </RelativeLayout>

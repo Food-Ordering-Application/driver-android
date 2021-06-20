@@ -109,21 +109,20 @@ public class CreateDepositDialog extends Dialog {
     private void initPayPal(){
         payPalButton.setup(
                 createOrderActions ->{
-                    UserService.createDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(), numberMoney, (success, paypalId) -> {
+                    UserService.createDepositMoneyToMainWallet(numberMoney, (success, paypalId) -> {
                         createOrderActions.set(paypalId);
                     });
                 }
                        ,
-                approval -> UserService.approveDepositMoneyToMainWallet(LoginSession.getInstance().getDriver().getId(),  approval.getData().getOrderId(), (success,depositData) -> {
+                approval -> UserService.approveDepositMoneyToMainWallet(approval.getData().getOrderId(),
+                        (success,depositData) -> {
                     if (success){
                         if (balanceChangeListener !=null){
                             balanceChangeListener.onChange(depositData.getMainBalance());
-                            Log.e("PAYPAL_DEPOSIT","successed");
                         }
                     }else{
                         if (balanceChangeListener !=null){
                             balanceChangeListener.onChange(-1);
-                            Log.e("PAYPAL_DEPOSIT","fail");
 
                         }
                     }
