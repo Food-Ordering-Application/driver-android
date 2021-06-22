@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.foa.driver.api.OrderService;
 import com.foa.driver.api.UserService;
+import com.foa.driver.config.Config;
 import com.foa.driver.dialog.NewDeliveryDialog;
 import com.foa.driver.dialog.QRDialog;
 import com.foa.driver.model.Order;
@@ -70,8 +71,8 @@ public class MainActivity extends AppCompatActivity  {
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
         }
 
-        PushNotifications.start(getApplicationContext(), "77650b88-b6b2-4178-9fc2-95c36493470d");
-        PushNotifications.addDeviceInterest("a22f3f78-be7f-11eb-8529-0242ac130003");
+        PushNotifications.start(getApplicationContext(), Config.PUSHER_ID);
+        PushNotifications.addDeviceInterest(LoginSession.getInstance().getDriver().getId());
 
         initPusher();
         checkAndShowNotificationOrder();

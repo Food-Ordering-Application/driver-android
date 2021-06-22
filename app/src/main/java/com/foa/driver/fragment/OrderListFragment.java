@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -31,6 +32,7 @@ public class OrderListFragment extends Fragment {
     private FoldingCellListAdapter adapter;
     private LottieAnimationView driverLoadingView;
     private OrderStatusQuery type;
+    private TextView emptyListTextView;
     private boolean isFirst=false;
 
     public OrderListFragment(OrderStatusQuery type){
@@ -43,7 +45,8 @@ public class OrderListFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_order_list, container, false);
         theListView = root.findViewById(R.id.mainListView);
         driverLoadingView = root.findViewById(R.id.driverLoadingView);
-
+        emptyListTextView = root.findViewById(R.id.emptyListTextView);
+        emptyListTextView.setVisibility(View.GONE);
         return root;
     }
 
@@ -52,8 +55,9 @@ public class OrderListFragment extends Fragment {
         super.onResume();
         if (!isFirst){
             driverLoadingView.setVisibility(View.VISIBLE);
-            OrderService.getAllOrder(LoginSession.getInstance().getDriver().getId(), OrderStatusQuery.COMPLETED.name(), 1,25,null, null, (success, data) -> {
+            OrderService.getAllOrder(LoginSession.getInstance().getDriver().getId(), type.name(), 1,25, (success, data) -> {
                 if (success){
+                    if (data.size()==0)  emptyListTextView.setVisibility(View.VISIBLE);
                     driverLoadingView.setVisibility(View.GONE);
                     if (type== OrderStatusQuery.ACTIVE && data.size()>0){
                         List<Order> list = new ArrayList<>();
@@ -78,6 +82,9 @@ public class OrderListFragment extends Fragment {
                         });
                     }
                     isFirst =true;
+                }else{
+                    emptyListTextView.setVisibility(View.VISIBLE);
+                    driverLoadingView.setVisibility(View.GONE);
                 }
             });
         }

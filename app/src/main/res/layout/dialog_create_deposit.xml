@@ -39,7 +39,8 @@
         android:paddingBottom="6dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="20dp">
+        android:paddingTop="20dp"
+        android:gravity="center">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_height="wrap_content"
@@ -62,6 +63,11 @@
                 android:singleLine="true"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+        <ProgressBar
+            android:id="@+id/processLoading"
+            android:visibility="gone"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
 
         <com.paypal.checkout.paymentbutton.PayPalButton
             android:id="@+id/payPalButton"

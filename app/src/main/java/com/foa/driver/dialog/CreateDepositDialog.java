@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foa.driver.R;
 import com.foa.driver.api.UserService;
@@ -34,6 +36,7 @@ public class CreateDepositDialog extends Dialog {
     private TextView titleTransaction;
     private BalanceChangeListener balanceChangeListener;
     private WithdrawPendingListener withdrawPendingListener;
+    private ProgressBar processLoading;
 
 
     public CreateDepositDialog(Context context, boolean isDeposit) {
@@ -63,6 +66,7 @@ public class CreateDepositDialog extends Dialog {
         withDrawButton = findViewById(R.id.withdrawButton);
         createDepositButton = findViewById(R.id.createDepositButton);
         titleTransaction = findViewById(R.id.titleTransaction);
+        processLoading = findViewById(R.id.processLoading);
         if (isDeposit){
             initPayPal();
             createDepositButton.setVisibility(View.VISIBLE);
@@ -102,6 +106,8 @@ public class CreateDepositDialog extends Dialog {
 
         createDepositButton.setOnClickListener(view -> {
             payPalButton.performClick();
+            createDepositButton.setEnabled(false);
+            processLoading.setVisibility(View.VISIBLE);
         });
 
     }
@@ -123,7 +129,7 @@ public class CreateDepositDialog extends Dialog {
                     }else{
                         if (balanceChangeListener !=null){
                             balanceChangeListener.onChange(-1);
-
+                            createDepositButton.setEnabled(true);
                         }
                     }
 
@@ -137,6 +143,10 @@ public class CreateDepositDialog extends Dialog {
                 if (success){
                    if(withdrawPendingListener!=null) withdrawPendingListener.onPending(numberMoney);
                     dismiss();
+                }else{
+                    createDepositButton.setEnabled(true);
+                    processLoading.setVisibility(View.GONE);
+                    Toast.makeText(context, "Rút tiền thất bại, vui lòng thử lại", Toast.LENGTH_SHORT).show();
                 }
             });
         });

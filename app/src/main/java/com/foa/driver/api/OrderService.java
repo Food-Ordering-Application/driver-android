@@ -53,8 +53,17 @@ public class OrderService {
         });
     }
 
+    public static void getAllOrder(String driverId, String status,int page, int size, IDataResultCallback<List<Order>> resultCallback) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        String startDate = Helper.dateSQLiteFormat.format(calendar.getTime());
+        calendar.add(Calendar.DATE,1);
+        String endDate = Helper.dateSQLiteFormat.format(calendar.getTime());
+        getAllOrder(driverId, status, page, size,startDate,endDate, resultCallback);
+    }
+
 
     public static void getAllOrder(String driverId, String status,int page, int size,String startDate, String endDate, IDataResultCallback<List<Order>> resultCallback) {
+
         Call<ResponseAdapter<OrderListData>> responseCall = RetrofitClient.getInstance().getAppService()
                 .getAllOrder(driverId, status, page, size,startDate,endDate);
         responseCall.enqueue(new Callback<ResponseAdapter<OrderListData>>() {

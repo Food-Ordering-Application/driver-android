@@ -18,6 +18,12 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:scrollbars="none"/>
+    <TextView
+        android:id="@+id/emptyListTextView"
+        android:text="Không có đơn hàng nào"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
     <com.airbnb.lottie.LottieAnimationView
         android:visibility="gone"
         android:id="@+id/driverLoadingView"

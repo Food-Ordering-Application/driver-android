@@ -63,7 +63,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 //    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.42.6'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.42.6'
+//    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.42.6'
     implementation 'com.mapbox.navigator:mapbox-navigation-native:7.0.0'
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
     implementation "com.airbnb.android:lottie:3.4.0"

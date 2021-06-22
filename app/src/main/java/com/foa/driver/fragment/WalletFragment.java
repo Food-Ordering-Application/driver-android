@@ -68,6 +68,7 @@ public class WalletFragment extends Fragment {
                     Toast.makeText(getActivity(), "Nạp tiền thất bại", Toast.LENGTH_SHORT).show();
                 }else{
                     mainBalanceTextView.setText(Helper.formatMoney(balance));
+                    loadTransaction();
                 }
                 dialog.dismiss();
             });
@@ -89,6 +90,13 @@ public class WalletFragment extends Fragment {
                 depositBalance.setText(Helper.formatMoney(data.getDepositBalance()));
             }
         });
+
+        loadTransaction();
+
+        initPusher();
+    }
+
+    private void loadTransaction(){
         processLoading.setVisibility(View.VISIBLE);
         UserService.getTransactionHistory(LoginSession.getInstance().getDriver().getId(), (success, data) -> {
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -98,8 +106,6 @@ public class WalletFragment extends Fragment {
             transactionRecyclerView.setAdapter(transactionListAdapter);
             processLoading.setVisibility(View.GONE);
         });
-
-        initPusher();
     }
 
     private void initPusher(){
@@ -127,6 +133,7 @@ public class WalletFragment extends Fragment {
                 DepositData depositData = g.fromJson(event.getData(), DepositData.class);
                 mainBalanceTextView.setText(Helper.formatMoney(depositData.getMainBalance()));
                 withdrawPendingLayout.setVisibility(View.GONE);
+                loadTransaction();
             });
 
         });
