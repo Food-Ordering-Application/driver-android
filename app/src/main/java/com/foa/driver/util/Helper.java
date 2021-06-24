@@ -1,5 +1,6 @@
 package com.foa.driver.util;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
@@ -78,17 +79,16 @@ public final class Helper
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 
-	public static void setTimeout(Runnable runnable, int delay){
-		new Thread(() -> {
-			try {
-				Thread.sleep(delay);
-				runnable.run();
+	public static boolean isServiceRunning(Class<?> serviceClass, Context context) {
+		ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+			if (serviceClass.getName().equals(service.service.getClassName())) {
+				return true;
 			}
-			catch (Exception e){
-				System.err.println(e);
-			}
-		}).start();
+		}
+		return false;
 	}
+
 
 	public static class SplitDay {
 		String day;

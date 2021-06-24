@@ -1,12 +1,9 @@
 package com.foa.driver;
 
 import android.Manifest;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -14,21 +11,17 @@ import com.foa.driver.api.OrderService;
 import com.foa.driver.api.UserService;
 import com.foa.driver.config.Config;
 import com.foa.driver.dialog.NewDeliveryDialog;
-import com.foa.driver.dialog.QRDialog;
-import com.foa.driver.model.Order;
 import com.foa.driver.model.enums.OrderStatusQuery;
-import com.foa.driver.network.IDataResultCallback;
-import com.foa.driver.network.IResultCallback;
+import com.foa.driver.service.LocationService;
 import com.foa.driver.session.DriverModeSession;
 import com.foa.driver.session.LoginSession;
 import com.foa.driver.session.NotificationOrderIdSession;
 import com.foa.driver.session.OrderSession;
+import com.foa.driver.util.Helper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.gson.Gson;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
-import com.pusher.client.channel.Channel;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
@@ -40,8 +33,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -137,6 +128,11 @@ public class MainActivity extends AppCompatActivity  {
         UserService.updateIsActive(false, null, success -> {
             if (success) Log.e("Update Active :","false");
         });
+
+        if (Helper.isServiceRunning(LocationService.class,this)){
+            stopService(new Intent(this, LocationService.class));
+        }
+
     }
 
     @Override

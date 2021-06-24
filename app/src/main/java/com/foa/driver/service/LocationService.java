@@ -1,6 +1,7 @@
 package com.foa.driver.service;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -164,5 +165,6 @@ public class LocationService extends Service {
 
         }
     }
+
 
 }

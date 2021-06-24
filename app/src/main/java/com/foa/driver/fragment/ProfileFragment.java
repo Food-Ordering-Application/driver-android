@@ -2,16 +2,12 @@ package com.foa.driver.fragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -25,22 +21,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.foa.driver.LoginActivity;
-import com.foa.driver.MainActivity;
 import com.foa.driver.R;
 import com.foa.driver.api.UserService;
-import com.foa.driver.network.IDataResultCallback;
-import com.foa.driver.network.IResultCallback;
-import com.foa.driver.network.response.ActiveData;
 import com.foa.driver.service.LocationService;
 import com.foa.driver.session.LoginSession;
 import com.foa.driver.session.OrderSession;
-import com.foa.driver.util.Constants;
 import com.foa.driver.util.Debouncer;
+import com.foa.driver.util.Helper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class ProfileFragment extends Fragment {
@@ -53,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private Location lastLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private Debouncer debouncer = new Debouncer();
+    private boolean currentActive = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,6 +82,8 @@ public class ProfileFragment extends Fragment {
 
         UserService.getActive((success, data) -> {
             if (success){
+                currentActive = data.isActive();
+                Log.e("curent-location",String.valueOf(currentActive));
                 if (data.isActive()){
                     activeRadioButton.setChecked(true);
                     deActiveRadioButton.setChecked(false);
@@ -106,6 +99,8 @@ public class ProfileFragment extends Fragment {
 
     private void logout() {
         UserService.updateIsActive(false, lastLocation, success -> {
+            currentActive=false;
+            Log.e("curent-location",String.valueOf(currentActive));
             OrderSession.clearInstance();
             LoginSession.clearInstance();
             startActivity(new Intent(getActivity(), LoginActivity.class));
@@ -114,7 +109,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateDriverStatusAndLocation(RadioGroup radioGroup) {
-
+        boolean isActive = radioGroup.getCheckedRadioButtonId() == R.id.onlineRadioButton;
+        Log.e("curent-location",String.valueOf(currentActive));
+        if(currentActive==isActive) return;
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getActivity(), "Vui lòng bật quyền truy cập vị trí", Toast.LENGTH_SHORT).show();
@@ -126,9 +123,12 @@ public class ProfileFragment extends Fragment {
                         updateService(radioGroup);
                         Log.e("Client Last location",location.getLatitude()+ ","+location.getLongitude());
 
-                        UserService.updateIsActive(radioGroup.getCheckedRadioButtonId() == R.id.onlineRadioButton,
+                        UserService.updateIsActive(isActive,
                                 location,success -> {
-                                    if (!success) {
+                                    if (success) {
+                                        currentActive = isActive;
+                                        Log.e("curent-location",String.valueOf(currentActive));
+                                    }else{
                                         Toast.makeText(getActivity(), "Cập nhật nhận đơn thất bại!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -142,14 +142,17 @@ public class ProfileFragment extends Fragment {
     private void updateService(RadioGroup radioGroup){
         Intent intent = new Intent(getActivity(),LocationService.class );
         if (radioGroup.getCheckedRadioButtonId() ==  R.id.onlineRadioButton){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(intent);
-            } else {
-                getActivity().startService(intent);
-
+            if (!Helper.isServiceRunning(LocationService.class,getActivity())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    getActivity().startForegroundService(intent);
+                } else {
+                    getActivity().startService(intent);
+                }
             }
         }else{
             getActivity().stopService(intent);
         }
     }
+
+
 }
