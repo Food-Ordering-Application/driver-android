@@ -27,9 +27,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.foa.driver.api.UserService;
+import com.foa.driver.config.Config;
 import com.foa.driver.network.IResultCallback;
+import com.foa.driver.network.body.DriverLocationBody;
+import com.foa.driver.session.LoginSession;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.JsonObject;
+import com.pubnub.api.PNConfiguration;
+import com.pubnub.api.PubNub;
+import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.models.consumer.PNPublishResult;
+import com.pubnub.api.models.consumer.PNStatus;
 
 public class LocationService extends Service {
 
@@ -40,6 +49,7 @@ public class LocationService extends Service {
     private boolean started = false;
     private Handler handler = new Handler();
     private Location lastLocation;
+    private PubNub pubNub;
 
     private final int LOCATION_REFRESH_TIME = 10000;
     private final int LOCATION_REFRESH_DISTANCE = 0;
@@ -104,6 +114,7 @@ public class LocationService extends Service {
         }else{
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, new ServiceLocationListener());
+            initPubNub();
             startUpdateLocation();
         }
 
@@ -118,6 +129,7 @@ public class LocationService extends Service {
     };
 
     public void stopUpdateLocation() {
+        pubNub.unsubscribeAll();
         started = false;
         handler.removeCallbacks(runnable);
     }
@@ -128,11 +140,35 @@ public class LocationService extends Service {
     }
 
     private void updateLocationToServer() {
+        JsonObject entryUpdate = new JsonObject();
+        entryUpdate.addProperty("message", "location-update");
+        JsonObject entryDataUpdate = new JsonObject();
+        entryDataUpdate.addProperty("driverId",LoginSession.getInstance().getDriver().getId());
+        entryDataUpdate.addProperty("latitude",lastLocation.getLatitude());
+        entryDataUpdate.addProperty("longitude",lastLocation.getLongitude());
+        entryUpdate.add("payload",entryDataUpdate);
 
-        UserService.updateLocation(lastLocation, success -> {
-            if (success)
-            Log.e("service", "call api:"+ lastLocation.getLatitude()+";"+lastLocation.getLongitude());
-        });
+        pubNub.publish().channel(Config.PUBNUB_CHANNEL_NAME).message(entryUpdate)
+                .async((result, status) -> {
+                    if (status.isError()) {
+                        status.getErrorData().getThrowable().printStackTrace();
+                    }
+                    else {
+                        Log.e("[PUBLISH: sent]", "timetoken: " + result.getTimetoken());
+                    }
+                });
+//        UserService.updateLocation(lastLocation, success -> {
+//            if (success)
+//            Log.e("service", "call api:"+ lastLocation.getLatitude()+";"+lastLocation.getLongitude());
+//        });
+    }
+
+    private void initPubNub(){
+        PNConfiguration pnConfiguration = new PNConfiguration();
+        pnConfiguration.setPublishKey(Config.PUBNUB_PUBLISH_KEY);
+        pnConfiguration.setSubscribeKey(Config.PUBNUB_SUBSCRIBE_KEY);
+        pnConfiguration.setUuid(LoginSession.getInstance().getDriver().getId());
+        pubNub = new PubNub(pnConfiguration);
     }
 
 
@@ -150,10 +186,6 @@ public class LocationService extends Service {
             lastLocation = location;
         }
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
 
         @Override
         public void onProviderEnabled(@NonNull String provider) {

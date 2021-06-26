@@ -94,14 +94,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         responseCall.enqueue(new Callback<ResponseAdapter<LoginData>>() {
             @Override
             public void onResponse(Call<ResponseAdapter<LoginData>> call, Response<ResponseAdapter<LoginData>> response) {
+                btnLogin.setEnabled(true);
                 switch (response.code()) {
                     case Constants.STATUS_CODE_SUCCESS:
                         ResponseAdapter<LoginData> res = response.body();
                         if (res.getStatus() == Constants.STATUS_CODE_SUCCESS) {
                             LoginSession.setInstance(res.getData());
                             RetrofitClient.getInstance().setAuthorizationHeader(res.getData().getBearerAccessToken());
-
-                            btnLogin.setEnabled(false);
                             YoYo.with(Techniques.FadeOutDown).interpolate(new OvershootInterpolator()).duration(500).withListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator arg0) {
@@ -141,6 +140,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onFailure(Call<ResponseAdapter<LoginData>> call, Throwable t) {
                 Log.e("Login Error", t.getMessage());
+                btnLogin.setEnabled(true);
                 Helper.showFailNotification(context,loading,wrapperLogin,getString(R.string.login_failed));
 
             }
